@@ -671,4 +671,5 @@ Graph<T>::~Graph() {
     deleteMatrix(pathMatrix, vertexSet.size());
 }
 
+
 #endif /* DA_TP_CLASSES_GRAPH */
