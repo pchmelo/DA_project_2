@@ -53,7 +53,7 @@ void Menu::Terminal() {
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
     int choice = 1;
-    string type = "small";
+    string type = "extra";
 
     grafos g;
     g.readGraph(choice, type);
@@ -65,16 +65,21 @@ void Menu::AmbienteTeste() {
 
     //2.1
 
+    auto vec = g.prim();
+    double primCost = g.primTotalCost(vec);
+
+    cout << "Prim Cost is " << primCost << endl;
+    cout << "Lower Bound one tree is "  << g.lowerBoundCommander() << endl;
+
     vector<Vertex<int>*> path;
     auto v = g.graph.findVertex(0);
     std::chrono::duration<double> time;
 
-    double res = g.backtrackingAlgorithm(0, path, time);
-    int i = 10;
+    //double res = g.backtrackingAlgorithm(0, path, time);
+    //int i = 10;
+    //Functions::printResults(path, res, time);
 
-    Functions::printResults(path, res, time);
-
-    g.checkGraph();
+    //g.checkGraph();
 
     //2.2
     g.commanderTriangularApprox();
@@ -83,7 +88,7 @@ void Menu::AmbienteTeste() {
     path.clear();
     v = g.graph.findVertex(0);
 
-    res = g.triangularApproximationHeuristic(0, path, time);
+    double res = g.triangularApproximationHeuristic(0, path, time);
     Functions::printResults(path, res, time);
 
     exit(0);

@@ -221,6 +221,7 @@ vector<Vertex<int>*> grafos::getVertexSetOfVertex(Vertex<int>* source) {
 
 double grafos::backtrackingAlgorithm(int source, vector<Vertex<int>*> &path, chrono::duration<double> &time) {
     auto start = chrono::high_resolution_clock::now();
+    this->resetStatus();
 
     Vertex<int>* v = this->graph.findVertex(source);
     v->setVisited(true);
@@ -283,6 +284,7 @@ bool grafos::checkEdge(Vertex<int>* vertex, Vertex<int>* dest, Edge<int>* &edge)
 
 double grafos::triangularApproximationHeuristic(int src, vector<Vertex<int>*> &path, chrono::duration<double> &time){
     auto start = chrono::high_resolution_clock::now();
+    this->resetStatus();
 
     Vertex<int>* source = this->graph.findVertex(src);
     double res = 0;
@@ -369,10 +371,50 @@ double grafos::findLongTrianhularPath(Vertex<int>* source, Vertex<int>* longVert
     return res;
 }
 
-double grafos::weightPrim(){
+double grafos::lowerBoundCommander(){
     double res = 0;
+    vector<int> all_vertex;
 
+    for(auto v : this->graph.getVertexSet()){
+        all_vertex.push_back(v->getInfo());
+    }
 
+    for(auto v : all_vertex){
+        Vertex<int>* vertex = this->graph.findVertex(v);
+
+        save_vertex sv;
+        sv.save(vertex);
+        this->graph.removeVertex(v);
+
+        vector<Vertex<int>*> mst = this->prim();
+        double primCost = this->primTotalCost(mst);
+
+        sv.restore(this->graph);
+
+        double t = this->maxWeightOneTree(sv.v, primCost);
+        if(t > res){
+            res = t;
+        }
+    }
+
+    return res;
+}
+
+double grafos::maxWeightOneTree(int src, double primCost){
+    Vertex<int>* vertex = this->graph.findVertex(src);
+
+    double min_edge_1 = numeric_limits<double>::infinity();
+    double min_edge_2 = numeric_limits<double>::infinity();
+
+    for (auto& edge : vertex->getAdj()) {
+        if (edge->getWeight() < min_edge_1){
+            min_edge_2 = min_edge_1;
+            min_edge_1 = edge->getWeight();
+        } else if (edge->getWeight() < min_edge_2) {
+            min_edge_2 = edge->getWeight();
+        }
+    }
+    double res = primCost + min_edge_1 + min_edge_2;
 
     return res;
 }
@@ -392,7 +434,6 @@ double grafos::primTotalCost(vector<Vertex<int> *> &path){
     }
     return res;
 }
-
 
 vector<Vertex<int> *> grafos::prim() {
     vector<Vertex<int>* > res;
