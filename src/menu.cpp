@@ -170,7 +170,7 @@ void Menu::SubMenu() {
                 SubMenu();
                 break;
             case 3: {
-                selectedGraph.commanderTriangularApprox();
+                //selectedGraph.commanderTriangularApprox();
 
                 path.clear();
                 Functions::printLowerBound(lowerBound, elapsed_time);
