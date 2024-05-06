@@ -10,9 +10,18 @@
 #include "structs/data_type/grafos.h"
 
 class Menu {
+    private:
+    // Declare selectedGraph member variable
+    static grafos selectedGraph;
+    static double lowerBound;
+
     public:
         static void Terminal();
+        static void ToyMenu();
+        static void ExtraMenu();
+        static void SubMenu();
         static void AmbienteTeste();
+
 };
 
 
