@@ -219,15 +219,15 @@ vector<Vertex<int>*> grafos::getVertexSetOfVertex(Vertex<int>* source) {
     return res;
 }
 
-double grafos::backtrackingAlgorithm(int source, vector<Vertex<int>*> &path, chrono::duration<double> &time) {
+double grafos::backtrackingAlgorithm(int source, vector<int> &path, chrono::duration<double> &time) {
     auto start = chrono::high_resolution_clock::now();
     this->resetStatus();
 
     Vertex<int>* v = this->graph.findVertex(source);
     v->setVisited(true);
 
-    vector<Vertex<int>*> current_path (this->graph.getVertexSet().size());
-    current_path[0] = v;
+    vector<int> current_path (this->graph.getVertexSet().size());
+    current_path[0] = v->getInfo();
 
     double res = numeric_limits<double>::max();
     auxBacktrackingAlgorithm(v, v, current_path, res, 0, 1, path);
@@ -239,7 +239,7 @@ double grafos::backtrackingAlgorithm(int source, vector<Vertex<int>*> &path, chr
     return res;
 }
 
-void grafos::auxBacktrackingAlgorithm(Vertex<int>* v_src, Vertex<int>* vertex, vector<Vertex<int>*> &current_path, double &res, double cost_now, int count, vector<Vertex<int>*> &path) {
+void grafos::auxBacktrackingAlgorithm(Vertex<int>* v_src, Vertex<int>* vertex, vector<int> &current_path, double &res, double cost_now, int count, vector<int> &path) {
     Edge<int>* edge;
     bool check = this->checkEdge(vertex, v_src, edge);
     if(count == this->graph.getVertexSet().size() && check){
@@ -257,7 +257,7 @@ void grafos::auxBacktrackingAlgorithm(Vertex<int>* v_src, Vertex<int>* vertex, v
         if(!v->isVisited() && check){
             v->setVisited(true);
             cost_now += edge->getWeight();
-            current_path[count] = v;
+            current_path[count] = v->getInfo();
 
             if(cost_now < res){
                 auxBacktrackingAlgorithm(v_src, v, current_path, res, cost_now, count + 1, path);
@@ -282,7 +282,7 @@ bool grafos::checkEdge(Vertex<int>* vertex, Vertex<int>* dest, Edge<int>* &edge)
 
 //2.2 - Triangular Approximation Heuristic
 
-double grafos::triangularApproximationHeuristic(int src, vector<Vertex<int>*> &path, chrono::duration<double> &time){
+double grafos::triangularApproximationHeuristic(int src, vector<int> &path, chrono::duration<double> &time){
     auto start = chrono::high_resolution_clock::now();
     this->resetStatus();
 
@@ -292,7 +292,7 @@ double grafos::triangularApproximationHeuristic(int src, vector<Vertex<int>*> &p
     Vertex<int>* v_current = source;
     v_current->setVisited(true);
 
-    path.push_back(v_current);
+    path.push_back(v_current->getInfo());
 
     while(path.size() < this->graph.getVertexSet().size()){
         double min_cost = numeric_limits<double>::max();
@@ -307,7 +307,7 @@ double grafos::triangularApproximationHeuristic(int src, vector<Vertex<int>*> &p
 
         if(v_next != nullptr) {
             v_next->setVisited(true);
-            path.push_back(v_next);
+            path.push_back(v_next->getInfo());
             res += min_cost;
             v_current = v_next;
         }
@@ -318,7 +318,7 @@ double grafos::triangularApproximationHeuristic(int src, vector<Vertex<int>*> &p
         res += edge->getWeight();
     }
 
-    path.push_back(source);
+    path.push_back(source->getInfo());
 
     auto finish = chrono::high_resolution_clock::now();
     time = finish - start;
@@ -371,7 +371,18 @@ double grafos::findLongTrianhularPath(Vertex<int>* source, Vertex<int>* longVert
     return res;
 }
 
-double grafos::lowerBoundCommander(){
+double grafos::lowerBoundCommander(bool flag, chrono::duration<double> &time){
+    if(!flag){
+        auto start = chrono::high_resolution_clock::now();
+        vector<Vertex<int>*> mst = this->prim();
+        double primCost = this->primTotalCost(mst);
+
+        auto finish = chrono::high_resolution_clock::now();
+        time = finish - start;
+        return primCost;
+    }
+
+    auto start = chrono::high_resolution_clock::now();
     double res = 0;
     vector<int> all_vertex;
 
@@ -396,6 +407,9 @@ double grafos::lowerBoundCommander(){
             res = t;
         }
     }
+
+    auto finish = chrono::high_resolution_clock::now();
+    time = finish - start;
 
     return res;
 }

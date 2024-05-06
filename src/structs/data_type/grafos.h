@@ -32,15 +32,15 @@ public:
     double maxWeightOneTree(int src, double primCost);
     std::vector<Vertex<int>*> prim();
     double primTotalCost(std::vector<Vertex<int> *> &path);
-    double lowerBoundCommander();
+    double lowerBoundCommander(bool flag, std::chrono::duration<double> &time);
 
     //2.1 - Backtracking algorithm
-    double backtrackingAlgorithm(int source, std::vector<Vertex<int>*> &path, std::chrono::duration<double> &time);
-    void auxBacktrackingAlgorithm(Vertex<int>* v_src, Vertex<int>* vertex, std::vector<Vertex<int>*> &current_path, double &res, double cost_now, int count, std::vector<Vertex<int>*> &path);
+    double backtrackingAlgorithm(int source, std::vector<int> &path, std::chrono::duration<double> &time);
+    void auxBacktrackingAlgorithm(Vertex<int>* v_src, Vertex<int>* vertex, std::vector<int> &current_path, double &res, double cost_now, int count, std::vector<int> &path);
     bool checkEdge(Vertex<int>* vertex, Vertex<int>* dest, Edge<int>* &edge);
 
     //2.2 - Triangular Approximation Heuristic
-    double triangularApproximationHeuristic(int src, std::vector<Vertex<int>*> &path, std::chrono::duration<double> &time);
+    double triangularApproximationHeuristic(int src, std::vector<int> &path, std::chrono::duration<double> &time);
 
     void commanderTriangularApprox();
     void triangularApprox(Vertex<int>* source);

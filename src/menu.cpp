@@ -52,7 +52,7 @@ void Menu::Terminal() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 1;
+    int choice = 12;
     string type = "extra";
 
     grafos g;
@@ -65,31 +65,39 @@ void Menu::AmbienteTeste() {
 
     //2.1
 
-    auto vec = g.prim();
-    double primCost = g.primTotalCost(vec);
+    //auto vec = g.prim();
+    //double primCost = g.primTotalCost(vec);
 
-    cout << "Prim Cost is " << primCost << endl;
-    cout << "Lower Bound one tree is "  << g.lowerBoundCommander() << endl;
+    //cout << "Prim Cost is " << primCost << endl;
+    //cout << "Lower Bound one tree is "  << g.lowerBoundCommander() << endl;
 
-    vector<Vertex<int>*> path;
+    vector<int> path;
     auto v = g.graph.findVertex(0);
     std::chrono::duration<double> time;
 
     //double res = g.backtrackingAlgorithm(0, path, time);
     //int i = 10;
-    //Functions::printResults(path, res, time);
+    //Functions::printResultsOptimal((path, res, time);
 
     //g.checkGraph();
 
     //2.2
-    g.commanderTriangularApprox();
+    //g.commanderTriangularApprox();
     //Functions::printGraph(g);
+
+    
+    /*
     cout << endl;
     path.clear();
     v = g.graph.findVertex(0);
 
+    double lowerBound = g.lowerBoundCommander(true, time);
+    Functions::printLowerBound(lowerBound, time);
+    cout << endl;
+
     double res = g.triangularApproximationHeuristic(0, path, time);
-    Functions::printResults(path, res, time);
+    Functions::printResultsHeuristic(path, res, time, lowerBound);
+    */
 
     exit(0);
 }

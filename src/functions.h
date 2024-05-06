@@ -17,9 +17,14 @@ public:
 
     static void printGraph(grafos g);
 
-    //2.1 printar resultados do backtracking
-    static void printResults(std::vector<Vertex<int>*> path, double cost, std::chrono::duration<double> time);
+    //stats
+    static void printLowerBound(double lowerBound, std::chrono::duration<double> time);
 
+    //2.1 printar resultados de uma optimal solution
+    static void printResultsOptimal(std::vector<int> path, double optimal, std::chrono::duration<double> time);
+
+    //2.2 printar resultados de uma heuristic solution
+    static void printResultsHeuristic(std::vector<int> path, double heuristic, std::chrono::duration<double> time, double lower_bound);
 
 };
 
