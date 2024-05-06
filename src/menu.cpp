@@ -52,12 +52,12 @@ void Menu::Terminal() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 12;
+    int choice = 3;
     string type = "extra";
 
     grafos g;
     g.readGraph(choice, type);
-
+    g.checkGraph(type);
 
     //g.checkGraphSmall();
     //Functions::printGraph(g);
@@ -85,7 +85,7 @@ void Menu::AmbienteTeste() {
     //g.commanderTriangularApprox();
     //Functions::printGraph(g);
 
-    
+
     /*
     cout << endl;
     path.clear();

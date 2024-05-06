@@ -9,6 +9,26 @@
 
 using namespace std;
 
+double grafos::convertToRadians(double degree) {
+    return degree * (M_PI / 180);
+}
+
+double grafos::calculateDistanceHaverside(double lat1, double long1, double lat2, double long2){
+    double lat1_rad = convertToRadians(lat1);
+    double long1_rad = convertToRadians(long1);
+    double lat2_rad = convertToRadians(lat2);
+    double long2_rad = convertToRadians(long2);
+
+    double delta_lat = lat2_rad - lat1_rad;
+    double delta_long = long2_rad - long1_rad;
+
+    double aux = pow(sin(delta_lat / 2), 2) + cos(lat1_rad) * cos(lat2_rad) * pow(sin(delta_long / 2), 2);
+    double c = 2 * atan2(sqrt(aux), sqrt(1 - aux));
+    double earth_radius = 6371000;
+
+    return earth_radius * c;
+}
+
 void grafos::resetStatus() {
     for(auto v : this->graph.getVertexSet()){
         v->setVisited(false);
@@ -73,8 +93,34 @@ void grafos::addAllEdge(int choice, string type) {
     }
 }
 
+void grafos::readCoordinates(int choice, string type) {
+    string input = "";
+    if (type == "small"){
+        return;
+    }
+    else if(type == "extra"){
+        input = "../src/Data/Extra_Fully_Connected_Graphs/nodes.csv";
+    }
+    ifstream file(input);
+    string line;
+    getline(file, line);
+
+    while(getline(file, line)){
+        vector<string> values;
+        stringstream ss(line);
+
+        while(ss.good()){
+            string substr;
+            getline(ss, substr, ',');
+            values.push_back(substr);
+        }
+        this->vertex_map_coordinates[stoi(values[0])] = make_pair(stod(values[1]), stod(values[2]));
+    }
+}
+
 void grafos::readGraph(int choice, string type) {
     this->addAllEdge(choice, type);
+    this->readCoordinates(choice, type);
 
     string input = "";
 
@@ -146,12 +192,17 @@ void grafos::readGraph(int choice, string type) {
     }
 }
 
-void grafos::checkGraph() {
+void grafos::checkGraph(string type) {
     int size = this->graph.getVertexSet().size() - 1;
 
     for(auto v : this->graph.getVertexSet()){
         if(v->getAdj().size() != size){
-            normalizeGraph(v);
+            if(type == "small"){
+                normalizeGraph(v);
+            }
+            else{
+                this->normalizationRealCoordinates(v);
+            }
         }
     }
 }
@@ -205,6 +256,26 @@ void grafos::triangular_proximation(Vertex<int>* v1, Vertex<int>* v2, Vertex<int
     this->graph.addEdge(v1->getInfo(), v3->getInfo(), rel_dist);
     this->graph.addEdge(v3->getInfo(), v1->getInfo(), rel_dist);
 
+}
+
+void grafos::normalizationRealCoordinates(Vertex<int>* source) {
+    vector<Vertex<int>*> vertexSet = this->getVertexSetOfVertex(source);
+
+    for(auto v : this->graph.getVertexSet()){
+        auto it = find(vertexSet.begin(), vertexSet.end(), v);
+        if(it == vertexSet.end()){
+            double lat_1 = this->vertex_map_coordinates[source->getInfo()].second;
+            double long_1 = this->vertex_map_coordinates[source->getInfo()].first;
+            double lat_2 = this->vertex_map_coordinates[v->getInfo()].second;
+            double long_2 = this->vertex_map_coordinates[v->getInfo()].first;
+
+            double dist = this->calculateDistanceHaverside(lat_1, long_1, lat_2, long_2);
+            this->graph.addEdge(source->getInfo(), v->getInfo(), dist);
+            this->graph.addEdge(v->getInfo(), source->getInfo(), dist);
+
+            vertexSet.push_back(v);
+        }
+    }
 }
 
 vector<Vertex<int>*> grafos::getVertexSetOfVertex(Vertex<int>* source) {
@@ -486,6 +557,89 @@ vector<Vertex<int> *> grafos::prim() {
         res.push_back(v);
     }
 
+    return res;
+}
+
+Graph<int> grafos::convertPrimToGraph(vector<Vertex<int> *> mst) {
+    Graph<int> res;
+    for(auto v : mst){
+        res.addVertex(v->getInfo());
+    }
+
+    for(auto v : mst){
+        if(v->getPath() != nullptr){
+            res.addEdge(v->getPath()->getOrig()->getInfo(), v->getInfo(), v->getPath()->getWeight());
+        }
+    }
+
+    return res;
+}
+
+
+
+double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::duration<double> &time){
+    double res = 0;
+    auto start = chrono::high_resolution_clock::now();
+
+    //Step 1: calculate the minimum spanning tree using Prim's algorithm
+    vector<Vertex<int>*> mst = this->prim();
+
+    //Step 2: create a vector with the odd degree vertex of the mst
+    vector<Vertex<int>*> odd_degree_vertex = this->oddDegreeVertices(mst);
+
+    //Step 3: create a subgraph with the odd degree vertex
+    vector<Edge<int>*> minimum_weight_matching = this->minimumWeightMatching(odd_degree_vertex);
+
+    //Step 4: combine the subgraph with the mst (multigraph)
+    
+
+    //Step 5: form an eulerian circuit of the multigraph
+
+    //Step 6: form a hamiltonian circuit from the eulerian circuit
+
+    auto finish = chrono::high_resolution_clock::now();
+    time = finish - start;
+    return res;
+}
+
+vector<Vertex<int>*> grafos::oddDegreeVertices(vector<Vertex<int>*> mst){
+    vector<Vertex<int>*> res;
+    for(auto v : mst){
+        int out_degree = v->getAdj().size();
+        if(out_degree % 2 != 0){
+            res.push_back(v);
+        }
+    }
+    return res;
+}
+
+vector<Edge<int>*> grafos::minimumWeightMatching(vector<Vertex<int>*> oddDegreeVertices){
+    vector<Edge<int>*> res;
+
+    while(!oddDegreeVertices.empty()){
+        Vertex<int>* v = oddDegreeVertices.back();
+        oddDegreeVertices.pop_back();
+
+        double min_w = numeric_limits<double>::infinity();
+        Edge<int>* edge_min;
+        Vertex<int>* vertex_min;
+
+        for(auto w : oddDegreeVertices){
+            Edge<int>* v_w_edge;
+            bool check = checkEdge(v, w, v_w_edge);
+
+            if(check && v_w_edge->getWeight() < min_w){
+                min_w = v_w_edge->getWeight();
+                edge_min = v_w_edge;
+                vertex_min = w;
+            }
+        }
+
+        if(edge_min != nullptr){
+            res.push_back(edge_min);
+            oddDegreeVertices.erase(find(oddDegreeVertices.begin(), oddDegreeVertices.end(), vertex_min));
+        }
+    }
     return res;
 }
 

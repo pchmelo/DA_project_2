@@ -13,24 +13,32 @@
 class grafos {
 public:
     Graph<int> graph;
-    void resetStatus();
+    std::map<int, std::pair<double, double>> vertex_map_coordinates;
 
+    void resetStatus();
     //Type - Small
     //1 - shipping.csv, 2 - stadiums.csv, 3 - tourism.csv
     //Type - Extra
     //1 - 25, 2 - 50, 3 - 75, 4 - 100, 5 - 200, 6 - 300, 7 - 400, 8 - 500, 9 - 600, 10 - 700, 11 - 800, 12 - 900
     void addAllEdge(int choice, std::string type);
+    void readCoordinates(int choice, std::string type);
     void readGraph(int choice, std::string type);
 
     //functions to normalize the graph
-    void checkGraph();
+    void checkGraph(std::string type);
+    void normalizationRealCoordinates(Vertex<int>* source);
     void normalizeGraph(Vertex<int>* source);
     void triangular_proximation(Vertex<int>* v1, Vertex<int>* v2, Vertex<int>* v3);
     static std::vector<Vertex<int>*> getVertexSetOfVertex(Vertex<int>* source);
 
+    //extra
+    double convertToRadians(double degree);
+    double calculateDistanceHaverside(double lat1, double long1, double lat2, double long2);
+
     //stats
     double maxWeightOneTree(int src, double primCost);
     std::vector<Vertex<int>*> prim();
+    Graph<int> convertPrimToGraph(std::vector<Vertex<int>*> mst);
     double primTotalCost(std::vector<Vertex<int> *> &path);
     double lowerBoundCommander(bool flag, std::chrono::duration<double> &time);
 
@@ -46,6 +54,12 @@ public:
     void triangularApprox(Vertex<int>* source);
     double findMinLongTrianhularPath(Vertex<int>* source, Vertex<int>* dest);
     double findLongTrianhularPath(Vertex<int>* source, Vertex<int>* longVertex, Vertex<int>* dest);
+
+    //2.3 - Christofides Algorithm
+    double christofidesAlgorithm(std::vector<int> &path, std::chrono::duration<double> &time);
+    std::vector<Vertex<int>*> oddDegreeVertices(std::vector<Vertex<int>*> mst);
+    std::vector<Edge<int>*> minimumWeightMatching(std::vector<Vertex<int>*> oddDegreeVertices);
+    Graph<int> createMultiGraph(std::vector<Vertex<int>*> mst, std::vector<Edge<int>*> edges);
 };
 
 
