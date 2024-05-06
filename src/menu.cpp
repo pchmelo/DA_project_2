@@ -169,8 +169,20 @@ void Menu::SubMenu() {
                 Functions::printResultsHeuristic(path, res, elapsed_time, lowerBound);
                 SubMenu();
                 break;
-            case 3:
+            case 3: {
+                selectedGraph.commanderTriangularApprox();
+
+                path.clear();
+                Functions::printLowerBound(lowerBound, elapsed_time);
+                cout << endl;
+
+                double res_2 = selectedGraph.triangularApproximationHeuristic(0, path, elapsed_time);
+                double res_3 = selectedGraph.christofidesAlgorithm(path, elapsed_time);
+                Functions::printResultsHeuristic(path, res_3, elapsed_time, lowerBound);
+                cout << "New Algorithm is " << res_2 / res_3 << "x faster than the older one" << endl;
+                SubMenu();
                 break;
+            }
             case 4:
                 AmbienteTeste();
                 break;
