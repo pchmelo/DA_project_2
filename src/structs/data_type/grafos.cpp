@@ -627,6 +627,8 @@ double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::durati
 
     //Step 6: form a hamiltonian circuit from the eulerian circuit
     path = this->hamiltonianCircuit(eulerian_circuit, multigraph);
+    this->twoOptImprovement(path);
+
     res = this->calculatePathCost(path);
 
     auto finish = chrono::high_resolution_clock::now();
@@ -747,4 +749,33 @@ double grafos::calculatePathCost(vector<int> &path){
     }
     return res;
 }
+
+//2-opt improvement
+void grafos::twoOptImprovement(vector<int> &path){
+    bool improvement = true;
+    while(improvement){
+        improvement = false;
+        for(int i = 0; i < path.size() - 2; ++i){
+            for(int j = i + 2; j < path.size(); ++j){
+                double possivel_edge_cost = edgeCost(path[i], path[j]) + edgeCost(path[i + 1], path[j + 1]);
+                double actual_edge_cost = edgeCost(path[i], path[i + 1]) + edgeCost(path[j], path[j + 1]);
+                if(possivel_edge_cost < actual_edge_cost){
+                    reverse(path.begin() + i + 1, path.begin() + j + 1);
+                    improvement = true;
+                }
+            }
+        }
+    }
+}
+
+double grafos::edgeCost(int src, int dest){
+    Vertex<int>* v = this->graph.findVertex(src);
+    for(auto e : v->getAdj()){
+        if(e->getDest()->getInfo() == dest){
+            return e->getWeight();
+        }
+    }
+    return numeric_limits<double>::infinity();
+}
+
 

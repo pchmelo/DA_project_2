@@ -67,6 +67,11 @@ public:
     std::vector<int> eulerianCircuit(Graph<int> &multigraph);
     std::vector<int> hamiltonianCircuit(std::vector<int> &eulerianCircuit, Graph<int> &multigraph);
     double calculatePathCost(std::vector<int> &path);
+
+    //2-opt improvement
+    void twoOptImprovement(std::vector<int> &path);
+    double edgeCost(int src, int dest);
+
 };
 
 
