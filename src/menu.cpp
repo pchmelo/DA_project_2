@@ -193,7 +193,7 @@ void Menu::SubMenu() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 7;
+    int choice = 2;
     string type = "extra";
 
     grafos g;
@@ -246,6 +246,7 @@ void Menu::AmbienteTeste() {
 
     cout << endl;
 
+    //2.3
     double res_3 = g.christofidesAlgorithm(path, time);
     Functions::printResultsHeuristic(path, res_3, time, lowerBound);
     cout << res_3/res_2 <<endl;
