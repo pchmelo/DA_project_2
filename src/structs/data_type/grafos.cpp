@@ -58,7 +58,7 @@ Graph<int> grafos::copyGraph(Graph<int> g) {
         }
     }
 
-    return this->graph;
+    return res;
 }
 
 void grafos::addAllEdge(int choice, string type) {
@@ -640,7 +640,7 @@ vector<Vertex<int>*> grafos::oddDegreeVertices(vector<Vertex<int>*> mst, Graph<i
         Vertex<int>* vertex = g.findVertex(v->getInfo());
         int out_degree = vertex->getAdj().size();
         if(out_degree % 2 != 0){
-            res.push_back(vertex);
+            res.push_back(v);
         }
     }
     return res;

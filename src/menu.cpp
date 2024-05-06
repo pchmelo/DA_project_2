@@ -193,16 +193,13 @@ void Menu::SubMenu() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 2;
-    string type = "small";
+    int choice = 7;
+    string type = "extra";
 
     grafos g;
     g.readGraph(choice, type);
     g.checkGraph(type);
 
-    auto vec = g.prim();
-    auto n_g = g.convertPrimToGraph(vec);
-    int i = 10;
     //g.checkGraphSmall();
     //Functions::printGraph(g);
     //cout << "--------------------------------------" << endl;
@@ -219,14 +216,15 @@ void Menu::AmbienteTeste() {
 
     auto v = g.graph.findVertex(0);
     std::chrono::duration<double> time;
-    double lowerBound = g.lowerBoundCommander(true, time);
+    double lowerBound = g.lowerBoundCommander(false, time);
+    /*
     Functions::printLowerBound(lowerBound, time);
     cout << endl;
 
     double res = g.backtrackingAlgorithm(0, path, time);
     //int i = 10;
     Functions::printResultsOptimal(path, res, time);
-
+    */
     //double res = g.backtrackingAlgorithm(0, path, time);
     //Functions::printResultsOptimal((path, res, time);
 
@@ -234,25 +232,23 @@ void Menu::AmbienteTeste() {
     //g.checkGraph();
 
     //2.2
-    g.commanderTriangularApprox();
+    //g.commanderTriangularApprox();
     //Functions::printGraph(g);
 
-    /*
+
     cout << endl;
     path.clear();
-    v = g.graph.findVertex(0);
-
-
-    double lowerBound = g.lowerBoundCommander(true, time); !
     Functions::printLowerBound(lowerBound, time);
     cout << endl;
 
-    double res = g.triangularApproximationHeuristic(0, path, time);
-    Functions::printResultsHeuristic(path, res, time, lowerBound);
-    */
+    double res_2 = g.triangularApproximationHeuristic(0, path, time);
+    Functions::printResultsHeuristic(path, res_2, time, lowerBound);
 
-    //double res = g.christofidesAlgorithm(path, time);
-    //Functions::printResultsHeuristic(path, res, time, lowerBound);
+    cout << endl;
+
+    double res_3 = g.christofidesAlgorithm(path, time);
+    Functions::printResultsHeuristic(path, res_3, time, lowerBound);
+    cout << res_3/res_2 <<endl;
 
     exit(0);
 }
