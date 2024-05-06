@@ -627,7 +627,9 @@ double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::durati
 
     //Step 6: form a hamiltonian circuit from the eulerian circuit
     path = this->hamiltonianCircuit(eulerian_circuit, multigraph);
+
     this->twoOptImprovement(path);
+    //this->threeOptImprovement(path);
 
     res = this->calculatePathCost(path);
 
@@ -752,16 +754,43 @@ double grafos::calculatePathCost(vector<int> &path){
 
 //2-opt improvement
 void grafos::twoOptImprovement(vector<int> &path){
-    bool improvement = true;
-    while(improvement){
-        improvement = false;
+    bool flag = true;
+
+    while(flag){
+        flag = false;
         for(int i = 0; i < path.size() - 2; ++i){
             for(int j = i + 2; j < path.size(); ++j){
+
                 double possivel_edge_cost = edgeCost(path[i], path[j]) + edgeCost(path[i + 1], path[j + 1]);
                 double actual_edge_cost = edgeCost(path[i], path[i + 1]) + edgeCost(path[j], path[j + 1]);
+
                 if(possivel_edge_cost < actual_edge_cost){
+                    flag = true;
                     reverse(path.begin() + i + 1, path.begin() + j + 1);
-                    improvement = true;
+                }
+            }
+        }
+    }
+}
+
+void grafos::threeOptImprovement(vector<int> &path){
+    bool flag = true;
+
+    while(flag){
+        flag= false;
+
+        for(int i = 0; i < path.size() - 3; ++i){
+            for(int j = i + 2; j < path.size() - 1; ++j){
+                for(int k = j + 2; k < path.size(); ++k){
+
+                    double possivel_edge_cost = edgeCost(path[i], path[j]) + edgeCost(path[i + 1], path[k]) + edgeCost(path[j + 1], path[k + 1]);
+                    double actual_edge_cost = edgeCost(path[i], path[i + 1]) + edgeCost(path[j], path[j + 1]) + edgeCost(path[k], path[k + 1]);
+
+                    if(possivel_edge_cost < actual_edge_cost){
+                        flag = true;
+                        reverse(path.begin() + i + 1, path.begin() + j + 1);
+                        reverse(path.begin() + j + 1, path.begin() + k + 1);
+                    }
                 }
             }
         }

@@ -70,6 +70,7 @@ public:
 
     //2-opt improvement
     void twoOptImprovement(std::vector<int> &path);
+    void threeOptImprovement(std::vector<int> &path);
     double edgeCost(int src, int dest);
 
 };

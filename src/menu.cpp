@@ -188,7 +188,7 @@ void Menu::SubMenu() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 2;
+    int choice = 4;
     string type = "extra";
 
     grafos g;
