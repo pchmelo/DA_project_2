@@ -66,4 +66,8 @@ void Functions::printResultsHeuristic(vector<int> path, double heuristic, chrono
     std::cout << "\033[1;33mElapsed time: " << time.count() << " seconds\033[0m" << std::endl;
 }
 
+void Functions::resetGraph(grafos &g){
+    g.graph = Graph<int>();
+}
+
 
