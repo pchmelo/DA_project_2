@@ -14,7 +14,7 @@
 class Functions {
 public:
     static void printLogo();
-
+    static void resetGraph(grafos &g);
     static void printGraph(grafos g);
 
     //stats

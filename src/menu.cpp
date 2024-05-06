@@ -2,6 +2,7 @@
 // Created by pchmelo on 05-05-2024.
 //
 
+#include <set>
 #include "menu.h"
 
 
@@ -19,7 +20,6 @@ void Menu::Terminal() {
     cout << "\033[1;36m[ 1 ]\033[0m" << " Toy Graphs" << endl;
     cout << "\033[1;36m[ 2 ]\033[0m" << " Extra Fully Connected Graphs" << endl;
     cout << "\033[1;36m[ 3 ]\033[0m" << " Real Graphs" << endl;
-    cout << "\033[1;36m[ 4 ]\033[0m" << " Ambiente Teste" << endl;
     cout << "\033[1;31m[ 0 ]\033[0m" << " Exit" << endl;
     cout << endl;
 
@@ -64,9 +64,6 @@ void Menu::ToyMenu() {
     cout << "\033[1;36m[ 1 ]\033[0m" << " shipping.csv" << endl;
     cout << "\033[1;36m[ 2 ]\033[0m" << " stadiums.csv" << endl;
     cout << "\033[1;36m[ 3 ]\033[0m" << " tourism.csv" << endl;
-    cout << "\033[1;36m[ 4 ]\033[0m" << " Ambiente Teste" << endl;
-    cout << "\033[1;36m[ 5 ]\033[0m" << " Change Your Graph" << endl;
-    cout << "\033[1;31m[ 0 ]\033[0m" << " Exit" << endl;
     cout << endl;
 
     cout << "\033[1;34mDecision: \033[0m";
@@ -75,7 +72,7 @@ void Menu::ToyMenu() {
     cin >> decision_1;
     cout << endl;
 
-    if((decision_1 < "0") || (decision_1 > "5")){
+    if((decision_1 < "0") || (decision_1 > "3")){
         cout << "INVALID OPTION! \n";
         ToyMenu();
     }
@@ -104,9 +101,6 @@ void Menu::ExtraMenu() {
     cout << "\033[1;36m[ 10 ]\033[0m" << " 700 nodes" << endl;
     cout << "\033[1;36m[ 11 ]\033[0m" << " 800 nodes" << endl;
     cout << "\033[1;36m[ 12 ]\033[0m" << " 900 nodes" << endl;
-    cout << "\033[1;36m[ 13 ]\033[0m" << " Ambiente de Teste" << endl;
-    cout << "\033[1;36m[ 14 ]\033[0m" << " Change Your Graph" << endl;
-    cout << "\033[1;31m[ 0 ]\033[0m" << " Exit" << endl;
     cout << endl;
 
     cout << "\033[1;34mDecision: \033[0m";
@@ -115,12 +109,12 @@ void Menu::ExtraMenu() {
     cin >> decision_1;
     cout << endl;
 
-    /*ESTE IF ESTÁ A DAR ERRO PARA NÚMEROS >= 2
-    if((decision_1 < "0") || (decision_1 > "14")){
+    set<string> validOptions = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+
+    if(validOptions.find(decision_1) == validOptions.end()){
         cout << "INVALID OPTION! \n";
         ExtraMenu();
     }
-    */
 
     decision = stoi(decision_1);
 
@@ -166,7 +160,7 @@ void Menu::SubMenu() {
                 break;
             }
             case 2:
-                selectedGraph.commanderTriangularApprox();
+                selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
 
                 path.clear();
                 Functions::printLowerBound(lowerBound, elapsed_time);
@@ -181,6 +175,7 @@ void Menu::SubMenu() {
                 AmbienteTeste();
                 break;
             case 5:
+                Functions::resetGraph(selectedGraph);
                 Terminal();
                 break;
             default:
