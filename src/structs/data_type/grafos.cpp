@@ -35,6 +35,32 @@ void grafos::resetStatus() {
     }
 }
 
+bool grafos::checkEdge(int src, int dest, Graph<int> g) {
+    Vertex<int>* v_src = g.findVertex(src);
+    for(auto e : v_src->getAdj()){
+        if(e->getDest()->getInfo() == dest){
+            return true;
+        }
+    }
+    return false;
+}
+
+Graph<int> grafos::copyGraph(Graph<int> g) {
+    Graph<int> res;
+
+    for(auto v : g.getVertexSet()){
+        res.addVertex(v->getInfo());
+    }
+
+    for(auto v : g.getVertexSet()){
+        for(auto e : v->getAdj()){
+            res.addEdge(v->getInfo(), e->getDest()->getInfo(), e->getWeight());
+        }
+    }
+
+    return this->graph;
+}
+
 void grafos::addAllEdge(int choice, string type) {
     int max = 0;
 
@@ -569,6 +595,7 @@ Graph<int> grafos::convertPrimToGraph(vector<Vertex<int> *> mst) {
     for(auto v : mst){
         if(v->getPath() != nullptr){
             res.addEdge(v->getPath()->getOrig()->getInfo(), v->getInfo(), v->getPath()->getWeight());
+            res.addEdge(v->getInfo(), v->getPath()->getOrig()->getInfo(), v->getPath()->getWeight());
         }
     }
 
@@ -583,31 +610,37 @@ double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::durati
 
     //Step 1: calculate the minimum spanning tree using Prim's algorithm
     vector<Vertex<int>*> mst = this->prim();
+    Graph<int> g_mst = this->convertPrimToGraph(mst);
 
     //Step 2: create a vector with the odd degree vertex of the mst
-    vector<Vertex<int>*> odd_degree_vertex = this->oddDegreeVertices(mst);
+    vector<Vertex<int>*> odd_degree_vertex = this->oddDegreeVertices(mst, g_mst);
 
     //Step 3: create a subgraph with the odd degree vertex
     vector<Edge<int>*> minimum_weight_matching = this->minimumWeightMatching(odd_degree_vertex);
 
     //Step 4: combine the subgraph with the mst (multigraph)
-    
+    Graph<int> multigraph = this->createMultiGraph(minimum_weight_matching, g_mst);
 
     //Step 5: form an eulerian circuit of the multigraph
+    Graph<int> multigraph_copy = this->copyGraph(multigraph);
+    vector<int> eulerian_circuit = this->eulerianCircuit(multigraph_copy);
 
     //Step 6: form a hamiltonian circuit from the eulerian circuit
+    path = this->hamiltonianCircuit(eulerian_circuit, multigraph);
+    res = this->calculatePathCost(path);
 
     auto finish = chrono::high_resolution_clock::now();
     time = finish - start;
     return res;
 }
 
-vector<Vertex<int>*> grafos::oddDegreeVertices(vector<Vertex<int>*> mst){
+vector<Vertex<int>*> grafos::oddDegreeVertices(vector<Vertex<int>*> mst, Graph<int> g){
     vector<Vertex<int>*> res;
     for(auto v : mst){
-        int out_degree = v->getAdj().size();
+        Vertex<int>* vertex = g.findVertex(v->getInfo());
+        int out_degree = vertex->getAdj().size();
         if(out_degree % 2 != 0){
-            res.push_back(v);
+            res.push_back(vertex);
         }
     }
     return res;
@@ -643,6 +676,75 @@ vector<Edge<int>*> grafos::minimumWeightMatching(vector<Vertex<int>*> oddDegreeV
     return res;
 }
 
+Graph<int> grafos::createMultiGraph(vector<Edge<int>*> edges, Graph<int> g){
+    for(auto e : edges){
+        if(!this->checkEdge(e->getOrig()->getInfo(), e->getDest()->getInfo(), g)){
+            g.addEdge(e->getOrig()->getInfo(), e->getDest()->getInfo(), e->getWeight());
+            g.addEdge(e->getDest()->getInfo(), e->getOrig()->getInfo(), e->getWeight());
+        }
+    }
 
+    return g;
+}
 
+vector<int> grafos::eulerianCircuit(Graph<int> &multigraph){
+    vector<int> res;
+
+    stack<Vertex<int>*> circuit_current;
+    Vertex<int>* v_current = multigraph.findVertex(0);
+
+    circuit_current.push(v_current);
+
+    while(!circuit_current.empty()){
+        if(!v_current->getAdj().empty()){
+            circuit_current.push(v_current);
+            Vertex<int>* v_next = v_current->getAdj().back()->getDest();
+
+            multigraph.removeEdge(v_current->getInfo(), v_next->getInfo());
+            multigraph.removeEdge(v_next->getInfo(), v_current->getInfo());
+
+            v_current = v_next;
+        }
+        else{
+            res.push_back(v_current->getInfo());
+
+            v_current = circuit_current.top();
+            circuit_current.pop();
+        }
+    }
+
+    reverse(res.begin(), res.end());
+
+    return res;
+}
+
+vector<int> grafos::hamiltonianCircuit(vector<int> &eulerianCircuit, Graph<int> &multigraph){
+    vector<int> res;
+
+    for(auto v : eulerianCircuit){
+        Vertex<int>* vertex = multigraph.findVertex(v);
+        if(!vertex->isVisited()){
+            res.push_back(v);
+            vertex->setVisited(true);
+        }
+    }
+
+    res.push_back(res[0]);
+
+    return res;
+}
+
+double grafos::calculatePathCost(vector<int> &path){
+    double res = 0;
+    for(int i = 0; i < path.size() - 1; i++){
+        Vertex<int>* v = this->graph.findVertex(path[i]);
+        for(auto e : v->getAdj()){
+            if(e->getDest()->getInfo() == path[i + 1]){
+                res += e->getWeight();
+                break;
+            }
+        }
+    }
+    return res;
+}
 

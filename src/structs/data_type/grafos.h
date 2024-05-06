@@ -9,6 +9,7 @@
 #include "math.h"
 #include "chrono"
 #include "map"
+#include "stack"
 
 class grafos {
 public:
@@ -16,6 +17,9 @@ public:
     std::map<int, std::pair<double, double>> vertex_map_coordinates;
 
     void resetStatus();
+    bool checkEdge(int src, int dest, Graph<int> g);
+    Graph<int> copyGraph(Graph<int> g);
+
     //Type - Small
     //1 - shipping.csv, 2 - stadiums.csv, 3 - tourism.csv
     //Type - Extra
@@ -57,9 +61,12 @@ public:
 
     //2.3 - Christofides Algorithm
     double christofidesAlgorithm(std::vector<int> &path, std::chrono::duration<double> &time);
-    std::vector<Vertex<int>*> oddDegreeVertices(std::vector<Vertex<int>*> mst);
+    std::vector<Vertex<int>*> oddDegreeVertices(std::vector<Vertex<int>*> mst, Graph<int> g);
     std::vector<Edge<int>*> minimumWeightMatching(std::vector<Vertex<int>*> oddDegreeVertices);
-    Graph<int> createMultiGraph(std::vector<Vertex<int>*> mst, std::vector<Edge<int>*> edges);
+    Graph<int> createMultiGraph(std::vector<Edge<int>*> edges, Graph<int> g);
+    std::vector<int> eulerianCircuit(Graph<int> &multigraph);
+    std::vector<int> hamiltonianCircuit(std::vector<int> &eulerianCircuit, Graph<int> &multigraph);
+    double calculatePathCost(std::vector<int> &path);
 };
 
 

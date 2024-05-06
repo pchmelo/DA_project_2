@@ -52,13 +52,16 @@ void Menu::Terminal() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 3;
-    string type = "extra";
+    int choice = 2;
+    string type = "small";
 
     grafos g;
     g.readGraph(choice, type);
     g.checkGraph(type);
 
+    auto vec = g.prim();
+    auto n_g = g.convertPrimToGraph(vec);
+    int i = 10;
     //g.checkGraphSmall();
     //Functions::printGraph(g);
     //cout << "--------------------------------------" << endl;
@@ -74,10 +77,13 @@ void Menu::AmbienteTeste() {
     vector<int> path;
     auto v = g.graph.findVertex(0);
     std::chrono::duration<double> time;
+    double lowerBound = g.lowerBoundCommander(true, time);
+    Functions::printLowerBound(lowerBound, time);
+    cout << endl;
 
-    //double res = g.backtrackingAlgorithm(0, path, time);
+    double res = g.backtrackingAlgorithm(0, path, time);
     //int i = 10;
-    //Functions::printResultsOptimal((path, res, time);
+    Functions::printResultsOptimal(path, res, time);
 
     //g.checkGraph();
 
@@ -85,19 +91,17 @@ void Menu::AmbienteTeste() {
     //g.commanderTriangularApprox();
     //Functions::printGraph(g);
 
-
     /*
     cout << endl;
     path.clear();
     v = g.graph.findVertex(0);
 
-    double lowerBound = g.lowerBoundCommander(true, time);
-    Functions::printLowerBound(lowerBound, time);
-    cout << endl;
-
     double res = g.triangularApproximationHeuristic(0, path, time);
     Functions::printResultsHeuristic(path, res, time, lowerBound);
     */
+
+    //double res = g.christofidesAlgorithm(path, time);
+    //Functions::printResultsHeuristic(path, res, time, lowerBound);
 
     exit(0);
 }
