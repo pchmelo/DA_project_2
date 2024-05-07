@@ -25,7 +25,7 @@ public:
     //Type - Extra
     //1 - 25, 2 - 50, 3 - 75, 4 - 100, 5 - 200, 6 - 300, 7 - 400, 8 - 500, 9 - 600, 10 - 700, 11 - 800, 12 - 900
     void addAllEdge(int choice, std::string type);
-    void readCoordinates(int choice, std::string type);
+    double readCoordinates(int choice, std::string type);
     void readGraph(int choice, std::string type);
 
     //functions to normalize the graph
@@ -72,6 +72,10 @@ public:
     void twoOptImprovement(std::vector<int> &path);
     void threeOptImprovement(std::vector<int> &path);
     double edgeCost(int src, int dest);
+
+    //2.4 - Is Connected
+    bool isConnected();
+    double realTriangularApproximationHeuristic(int src, std::vector<int> &path, std::chrono::duration<double> &time);
 
 };
 

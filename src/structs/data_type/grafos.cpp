@@ -62,7 +62,7 @@ Graph<int> grafos::copyGraph(Graph<int> g) {
 }
 
 void grafos::addAllEdge(int choice, string type) {
-    int max = 0;
+    int max = this->readCoordinates(choice, type);
 
     if(type == "small"){
         if(choice == 1){
@@ -74,59 +74,33 @@ void grafos::addAllEdge(int choice, string type) {
         else if(choice == 3){
             max = 5;
         }
-    }
-    else if(type == "extra"){
-        if(choice == 1){
-            max = 25;
+        for(int i = 0; i < max; i++){
+            this->graph.addVertex(i);
         }
-        else if(choice == 2){
-            max = 50;
-        }
-        else if(choice == 3){
-            max = 75;
-        }
-        else if(choice == 4){
-            max = 100;
-        }
-        else if(choice == 5){
-            max = 200;
-        }
-        else if(choice == 6){
-            max = 300;
-        }
-        else if(choice == 7){
-            max = 400;
-        }
-        else if(choice == 8){
-            max = 500;
-        }
-        else if(choice == 9){
-            max = 600;
-        }
-        else if(choice == 10){
-            max = 700;
-        }
-        else if(choice == 11){
-            max = 800;
-        }
-        else if(choice == 12){
-            max = 900;
-        }
-    }
-
-    for(int i = 0; i < max; i++){
-        this->graph.addVertex(i);
     }
 }
 
-void grafos::readCoordinates(int choice, string type) {
+double grafos::readCoordinates(int choice, string type) {
+    double res = 0;
     string input = "";
     if (type == "small"){
-        return;
+        return res;
     }
     else if(type == "extra"){
         input = "../src/Data/Extra_Fully_Connected_Graphs/nodes.csv";
     }
+    else if(type == "real"){
+        if(choice == 1){
+            input = "../src/Data/Real-world Graphs/graph1/nodes.csv";
+        }
+        else if(choice == 2){
+            input = "../src/Data/Real-world Graphs/graph2/nodes.csv";
+        }
+        else if (choice == 3){
+            input = "../src/Data/Real-world Graphs/graph3/nodes.csv";
+        }
+    }
+
     ifstream file(input);
     string line;
     getline(file, line);
@@ -140,13 +114,16 @@ void grafos::readCoordinates(int choice, string type) {
             getline(ss, substr, ',');
             values.push_back(substr);
         }
+        this->graph.addVertex(res);
         this->vertex_map_coordinates[stoi(values[0])] = make_pair(stod(values[1]), stod(values[2]));
+        res++;
     }
+
+    return res;
 }
 
 void grafos::readGraph(int choice, string type) {
     this->addAllEdge(choice, type);
-    this->readCoordinates(choice, type);
 
     string input = "";
 
@@ -197,6 +174,17 @@ void grafos::readGraph(int choice, string type) {
         }
         else if(choice == 12){
             input = "../src/Data/Extra_Fully_Connected_Graphs/edges_900.csv";
+        }
+    }
+    else if(type == "real"){
+        if(choice == 1){
+            input = "../src/Data/Real-world Graphs/graph1/edges.csv";
+        }
+        else if(choice == 2){
+            input = "../src/Data/Real-world Graphs/graph2/edges.csv";
+        }
+        else if (choice == 3){
+            input = "../src/Data/Real-world Graphs/graph3/edges.csv";
         }
     }
 
@@ -805,6 +793,29 @@ double grafos::edgeCost(int src, int dest){
         }
     }
     return numeric_limits<double>::infinity();
+}
+
+//2.4 - Is Connected
+
+bool grafos::isConnected(){
+    auto vec = this->graph.dfs();
+
+    for(auto v : this->graph.getVertexSet()){
+        if(!v->isVisited()){
+            return false;
+        }
+    }
+    return true;
+}
+
+double grafos::realTriangularApproximationHeuristic(int src, std::vector<int> &path,
+                                                    std::chrono::duration<double> &time) {
+    bool canBeDone = this->isConnected();
+    if(canBeDone){
+        return this->triangularApproximationHeuristic(src, path, time);
+    }
+
+    return -1;
 }
 
 

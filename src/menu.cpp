@@ -188,12 +188,16 @@ void Menu::SubMenu() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 4;
-    string type = "extra";
+    int choice = 1;
+    string type = "real";
 
     grafos g;
     g.readGraph(choice, type);
-    g.checkGraph(type);
+    auto f = g.readCoordinates(choice, type);
+    int i = 10;
+
+
+    //g.checkGraph(type);
 
     //g.checkGraphSmall();
     //Functions::printGraph(g);
