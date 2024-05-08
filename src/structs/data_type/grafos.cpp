@@ -6,7 +6,6 @@
 #include "fstream"
 #include "sstream"
 #include "vector"
-#include <unordered_set>
 
 using namespace std;
 
@@ -633,71 +632,79 @@ Graph<int> grafos::convertPrimToGraph(vector<Vertex<int> *> mst) {
 
 
 
-double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::duration<double> &time) {
-    auto start = std::chrono::high_resolution_clock::now();
+double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::duration<double> &time){
+    double res = 0;
+    auto start = chrono::high_resolution_clock::now();
 
-    // Step 1: Calculate the minimum spanning tree using Prim's algorithm
-    std::vector<Vertex<int>*> mst = this->prim();
+    //Step 1: calculate the minimum spanning tree using Prim's algorithm
+    vector<Vertex<int>*> mst = this->prim();
     Graph<int> g_mst = this->convertPrimToGraph(mst);
 
-    // Step 2: Create a vector with the odd degree vertex of the mst
-    std::vector<Vertex<int>*> odd_degree_vertex = this->oddDegreeVertices(mst, g_mst);
+    //Step 2: create a vector with the odd degree vertex of the mst
+    vector<Vertex<int>*> odd_degree_vertex = this->oddDegreeVertices(mst, g_mst);
 
-    // Step 3: Create a subgraph with the odd degree vertex
-    std::vector<Edge<int>*> minimum_weight_matching = this->minimumWeightMatching(odd_degree_vertex);
+    //Step 3: create a subgraph with the odd degree vertex
+    vector<Edge<int>*> minimum_weight_matching = this->minimumWeightMatching(odd_degree_vertex);
 
-    // Step 4: Combine the subgraph with the mst (multigraph)
+    //Step 4: combine the subgraph with the mst (multigraph)
     Graph<int> multigraph = this->createMultiGraph(minimum_weight_matching, g_mst);
 
-    // Step 5: Form an Eulerian circuit of the multigraph
-    std::vector<int> eulerian_circuit = this->eulerianCircuit(multigraph);
+    //Step 5: form an eulerian circuit of the multigraph
+    Graph<int> multigraph_copy = this->copyGraph(multigraph);
+    vector<int> eulerian_circuit = this->eulerianCircuit(multigraph_copy);
 
-    // Step 6: Form a Hamiltonian circuit from the Eulerian circuit
+    //Step 6: form a hamiltonian circuit from the eulerian circuit
     path = this->hamiltonianCircuit(eulerian_circuit, multigraph);
 
-    // Calculate total path cost
-    double res = this->calculatePathCost(path);
-    
-  //this->twoOptImprovement(path);
+    //this->twoOptImprovement(path);
     //this->threeOptImprovement(path);
 
+    res = this->calculatePathCost(path);
 
-    auto finish = std::chrono::high_resolution_clock::now();
+    auto finish = chrono::high_resolution_clock::now();
     time = finish - start;
-
     return res;
 }
 
-
-std::vector<Vertex<int>*> grafos::oddDegreeVertices(const std::vector<Vertex<int>*>& mst, const Graph<int>& g) {
-    std::vector<Vertex<int>*> res;
-    for (auto v : mst) {
-        int out_degree = v->getAdj().size();
-        if (out_degree % 2 != 0) {
+vector<Vertex<int>*> grafos::oddDegreeVertices(vector<Vertex<int>*> mst, Graph<int> g){
+    vector<Vertex<int>*> res;
+    for(auto v : mst){
+        Vertex<int>* vertex = g.findVertex(v->getInfo());
+        int out_degree = vertex->getAdj().size();
+        if(out_degree % 2 != 0){
             res.push_back(v);
         }
     }
     return res;
 }
 
-std::vector<Edge<int>*> grafos::minimumWeightMatching(const std::vector<Vertex<int>*>& oddDegreeVertices) {
-    std::vector<Edge<int>*> res;
-    std::vector<bool> visited(oddDegreeVertices.size(), false);
+vector<Edge<int>*> grafos::minimumWeightMatching(vector<Vertex<int>*> oddDegreeVertices){
+    vector<Edge<int>*> res;
 
-    for (size_t i = 0; i < oddDegreeVertices.size(); ++i) {
-        for (size_t j = i + 1; j < oddDegreeVertices.size(); ++j) {
-            if (!visited[i] && !visited[j]) {
-                Edge<int>* edge;
-                bool check = checkEdge(oddDegreeVertices[i], oddDegreeVertices[j], edge);
-                if (check) {
-                    res.push_back(edge);
-                    visited[i] = visited[j] = true;
-                    break;
-                }
+    while(!oddDegreeVertices.empty()){
+        Vertex<int>* v = oddDegreeVertices.back();
+        oddDegreeVertices.pop_back();
+
+        double min_w = numeric_limits<double>::infinity();
+        Edge<int>* edge_min;
+        Vertex<int>* vertex_min;
+
+        for(auto w : oddDegreeVertices){
+            Edge<int>* v_w_edge;
+            bool check = checkEdge(v, w, v_w_edge);
+
+            if(check && v_w_edge->getWeight() < min_w){
+                min_w = v_w_edge->getWeight();
+                edge_min = v_w_edge;
+                vertex_min = w;
             }
         }
-    }
 
+        if(edge_min != nullptr){
+            res.push_back(edge_min);
+            oddDegreeVertices.erase(find(oddDegreeVertices.begin(), oddDegreeVertices.end(), vertex_min));
+        }
+    }
     return res;
 }
 
@@ -743,18 +750,19 @@ vector<int> grafos::eulerianCircuit(Graph<int> &multigraph){
     return res;
 }
 
-std::vector<int> grafos::hamiltonianCircuit(const std::vector<int>& eulerianCircuit, const Graph<int>& multigraph) {
-    std::vector<int> res;
-    std::unordered_set<int> visited;
+vector<int> grafos::hamiltonianCircuit(vector<int> &eulerianCircuit, Graph<int> &multigraph){
+    vector<int> res;
 
-    for (int v : eulerianCircuit) {
-        if (visited.find(v) == visited.end()) {
+    for(auto v : eulerianCircuit){
+        Vertex<int>* vertex = multigraph.findVertex(v);
+        if(!vertex->isVisited()){
             res.push_back(v);
-            visited.insert(v);
+            vertex->setVisited(true);
         }
     }
 
-    res.push_back(res.front());
+    res.push_back(res[0]);
+
     return res;
 }
 
@@ -849,3 +857,5 @@ double grafos::realTriangularApproximationHeuristic(int src, std::vector<int> &p
 
     return -1;
 }
+
+
