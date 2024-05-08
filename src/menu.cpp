@@ -45,6 +45,7 @@ void Menu::Terminal() {
                 ExtraMenu();
                 break;
             case 3:
+                RealMenu();
                 break;
             case 4:
                 AmbienteTeste();
@@ -144,6 +145,7 @@ void Menu::RealMenu() {
 
     decision = stoi(decision_1);
     selectedGraph.readGraph(decision, "real");
+    Graph<int> g = selectedGraph.graph;
     lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
     SubMenuReal();
 }
@@ -168,7 +170,7 @@ void Menu::SubMenu() {
 
     if((decision_1 < "0") || (decision_1 > "5")){
         cout << "INVALID OPTION! \n";
-        Terminal();
+        SubMenu();
     }
 
     decision = stoi(decision_1);
@@ -243,7 +245,7 @@ void Menu::SubMenuReal() {
 
     if((decision_1 < "0") || (decision_1 > "5")){
         cout << "INVALID OPTION! \n";
-        Terminal();
+        SubMenuReal();
     }
 
     decision = stoi(decision_1);
