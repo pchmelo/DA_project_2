@@ -19,6 +19,7 @@ class Menu {
         static void Terminal();
         static void ToyMenu();
         static void ExtraMenu();
+        static void RealMenu();
         static void SubMenu();
         static void AmbienteTeste();
 

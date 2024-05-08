@@ -12,6 +12,7 @@ double Menu::lowerBound;
 vector<int> path;
 std::chrono::duration<double> elapsed_time;
 double res;
+string type;
 
 void Menu::Terminal() {
     Functions::printLogo();
@@ -120,6 +121,33 @@ void Menu::ExtraMenu() {
 
     selectedGraph.readGraph(decision, "extra");
     selectedGraph.checkGraph("extra");
+    lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
+    SubMenu();
+}
+
+void Menu::RealMenu() {
+    Functions::printLogo();
+
+    cout << "\033[1;34mPlease choose your desired graph:\033[0m\n";
+    cout << "\033[1;36m[ 1 ]\033[0m" << " graph1" << endl;
+    cout << "\033[1;36m[ 2 ]\033[0m" << " graph2" << endl;
+    cout << "\033[1;36m[ 3 ]\033[0m" << " graph3" << endl;
+    cout << endl;
+
+    cout << "\033[1;34mDecision: \033[0m";
+    string decision_1;
+    int decision;
+    cin >> decision_1;
+    cout << endl;
+
+    if((decision_1 < "0") || (decision_1 > "3")){
+        cout << "INVALID OPTION! \n";
+        RealMenu();
+    }
+
+    decision = stoi(decision_1);
+    type = "real";
+    selectedGraph.readGraph(decision, type);
     lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
     SubMenu();
 }
