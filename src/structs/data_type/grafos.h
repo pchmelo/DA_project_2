@@ -61,11 +61,11 @@ public:
 
     //2.3 - Christofides Algorithm
     double christofidesAlgorithm(std::vector<int> &path, std::chrono::duration<double> &time);
-    std::vector<Vertex<int>*> oddDegreeVertices(std::vector<Vertex<int>*> mst, Graph<int> g);
-    std::vector<Edge<int>*> minimumWeightMatching(std::vector<Vertex<int>*> oddDegreeVertices);
+    std::vector<Vertex<int>*> oddDegreeVertices(const std::vector<Vertex<int>*>& mst, const Graph<int>& g);
+    std::vector<Edge<int>*> minimumWeightMatching(const std::vector<Vertex<int>*>& oddDegreeVertices);
     Graph<int> createMultiGraph(std::vector<Edge<int>*> edges, Graph<int> g);
     std::vector<int> eulerianCircuit(Graph<int> &multigraph);
-    std::vector<int> hamiltonianCircuit(std::vector<int> &eulerianCircuit, Graph<int> &multigraph);
+    std::vector<int> hamiltonianCircuit(const std::vector<int>& eulerianCircuit, const Graph<int>& multigraph);
     double calculatePathCost(std::vector<int> &path);
 
     //2-opt improvement
