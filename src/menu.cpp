@@ -307,7 +307,7 @@ void Menu::SubMenuReal() {
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
     int choice = 1;
-    string type = "extra";
+    string type = "real";
 
     grafos g;
     g.readGraph(choice, type);

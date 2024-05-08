@@ -144,7 +144,7 @@ double grafos::readCoordinates(int choice, string type) {
     getline(file, line);
 
     while(getline(file, line)){
-        if(res == limit){
+        if(res == limit && type == "extra"){
             break;
         }
         vector<string> values;
@@ -657,6 +657,10 @@ double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::durati
 
     // Calculate total path cost
     double res = this->calculatePathCost(path);
+    
+  //this->twoOptImprovement(path);
+    //this->threeOptImprovement(path);
+
 
     auto finish = std::chrono::high_resolution_clock::now();
     time = finish - start;
