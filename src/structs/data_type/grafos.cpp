@@ -82,12 +82,49 @@ void grafos::addAllEdge(int choice, string type) {
 
 double grafos::readCoordinates(int choice, string type) {
     double res = 0;
+    int limit = 0;
     string input = "";
     if (type == "small"){
         return res;
     }
     else if(type == "extra"){
         input = "../src/Data/Extra_Fully_Connected_Graphs/nodes.csv";
+        if(choice == 1){
+            limit = 25;
+        }
+        else if(choice == 2){
+            limit = 50;
+        }
+        else if(choice == 3){
+            limit = 75;
+        }
+        else if(choice == 4){
+            limit = 100;
+        }
+        else if(choice == 5){
+            limit = 200;
+        }
+        else if(choice == 6){
+            limit = 300;
+        }
+        else if(choice == 7){
+            limit = 400;
+        }
+        else if(choice == 8){
+            limit = 500;
+        }
+        else if(choice == 9){
+            limit = 600;
+        }
+        else if(choice == 10){
+            limit = 700;
+        }
+        else if(choice == 11){
+            limit = 800;
+        }
+        else if(choice == 12){
+            limit = 900;
+        }
     }
     else if(type == "real"){
         if(choice == 1){
@@ -106,6 +143,9 @@ double grafos::readCoordinates(int choice, string type) {
     getline(file, line);
 
     while(getline(file, line)){
+        if(res == limit){
+            break;
+        }
         vector<string> values;
         stringstream ss(line);
 
