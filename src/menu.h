@@ -21,6 +21,7 @@ class Menu {
         static void ExtraMenu();
         static void RealMenu();
         static void SubMenu();
+        static void SubMenuReal();
         static void AmbienteTeste();
 
 };

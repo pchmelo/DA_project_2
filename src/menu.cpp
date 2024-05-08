@@ -12,7 +12,6 @@ double Menu::lowerBound;
 vector<int> path;
 std::chrono::duration<double> elapsed_time;
 double res;
-string type;
 
 void Menu::Terminal() {
     Functions::printLogo();
@@ -46,6 +45,7 @@ void Menu::Terminal() {
                 ExtraMenu();
                 break;
             case 3:
+                RealMenu();
                 break;
             case 4:
                 AmbienteTeste();
@@ -79,7 +79,6 @@ void Menu::ToyMenu() {
     }
 
     decision = stoi(decision_1);
-
     selectedGraph.readGraph(decision, "small");
     selectedGraph.checkGraph("small");
     lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
@@ -118,7 +117,6 @@ void Menu::ExtraMenu() {
     }
 
     decision = stoi(decision_1);
-
     selectedGraph.readGraph(decision, "extra");
     selectedGraph.checkGraph("extra");
     lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
@@ -146,10 +144,10 @@ void Menu::RealMenu() {
     }
 
     decision = stoi(decision_1);
-    type = "real";
-    selectedGraph.readGraph(decision, type);
+    selectedGraph.readGraph(decision, "real");
+    Graph<int> g = selectedGraph.graph;
     lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
-    SubMenu();
+    SubMenuReal();
 }
 
 void Menu::SubMenu() {
@@ -172,7 +170,7 @@ void Menu::SubMenu() {
 
     if((decision_1 < "0") || (decision_1 > "5")){
         cout << "INVALID OPTION! \n";
-        Terminal();
+        SubMenu();
     }
 
     decision = stoi(decision_1);
@@ -215,6 +213,86 @@ void Menu::SubMenu() {
                 AmbienteTeste();
                 break;
             case 5:
+                Functions::resetGraph(selectedGraph);
+                Terminal();
+                break;
+            default:
+                break;
+        }
+
+        return;
+    }
+}
+
+void Menu::SubMenuReal() {
+    Functions::printLogo();
+
+    cout << "\033[1;34mPlease choose your desired option:\033[0m\n";
+    cout << "\033[1;36m[ 1 ]\033[0m" << " Backtracking Algorithm" << endl;
+    cout << "\033[1;36m[ 2 ]\033[0m" << " Triangular Approximation Heuristic" << endl;
+    cout << "\033[1;36m[ 3 ]\033[0m" << " Other Heuristics" << endl;
+    cout << "\033[1;36m[ 4 ]\033[0m" << " TSP in the Real World" << endl;
+    cout << "\033[1;36m[ 5 ]\033[0m" << " Ambiente Teste" << endl;
+    cout << "\033[1;36m[ 6 ]\033[0m" << " Change Your Graph" << endl;
+    cout << "\033[1;31m[ 0 ]\033[0m" << " Exit" << endl;
+    cout << endl;
+
+    cout << "\033[1;34mDecision: \033[0m";
+    string decision_1;
+    int decision;
+    cin >> decision_1;
+    cout << endl;
+
+    if((decision_1 < "0") || (decision_1 > "5")){
+        cout << "INVALID OPTION! \n";
+        SubMenuReal();
+    }
+
+    decision = stoi(decision_1);
+
+    while (true) {
+        switch (decision) {
+            case 1:
+            {
+                selectedGraph.checkGraph("real");
+                path.clear();
+                res = selectedGraph.backtrackingAlgorithm(0, path, elapsed_time);
+                Functions::printResultsOptimal(path, res, elapsed_time);
+                SubMenu();
+                break;
+            }
+            case 2:
+                selectedGraph.checkGraph("real");
+                selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
+
+                path.clear();
+                Functions::printLowerBound(lowerBound, elapsed_time);
+                cout << endl;
+                res = selectedGraph.triangularApproximationHeuristic(0, path, elapsed_time);
+                Functions::printResultsHeuristic(path, res, elapsed_time, lowerBound);
+                SubMenu();
+                break;
+            case 3: {
+                selectedGraph.checkGraph("real");
+                //selectedGraph.commanderTriangularApprox();
+
+                path.clear();
+                Functions::printLowerBound(lowerBound, elapsed_time);
+                cout << endl;
+
+                double res_2 = selectedGraph.triangularApproximationHeuristic(0, path, elapsed_time);
+                double res_3 = selectedGraph.christofidesAlgorithm(path, elapsed_time);
+                Functions::printResultsHeuristic(path, res_3, elapsed_time, lowerBound);
+                cout << "New Algorithm is " << res_2 / res_3 << "x faster than the older one" << endl;
+                SubMenu();
+                break;
+            }
+            case 4:
+                break;
+            case 5:
+                AmbienteTeste();
+                break;
+            case 6:
                 Functions::resetGraph(selectedGraph);
                 Terminal();
                 break;
