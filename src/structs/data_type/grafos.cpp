@@ -143,7 +143,7 @@ double grafos::readCoordinates(int choice, string type) {
     getline(file, line);
 
     while(getline(file, line)){
-        if(res == limit){
+        if(res == limit && type == "extra"){
             break;
         }
         vector<string> values;
@@ -656,8 +656,8 @@ double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::durati
     //Step 6: form a hamiltonian circuit from the eulerian circuit
     path = this->hamiltonianCircuit(eulerian_circuit, multigraph);
 
-    //this->twoOptImprovement(path);
-    this->threeOptImprovement(path);
+    this->twoOptImprovement(path);
+    //this->threeOptImprovement(path);
 
     res = this->calculatePathCost(path);
 
