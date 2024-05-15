@@ -9,6 +9,7 @@
 #include "functions.h"
 #include "structs/data_type/grafos.h"
 
+
 class Menu {
     private:
     // Declare selectedGraph member variable
@@ -20,8 +21,9 @@ class Menu {
         static void ToyMenu();
         static void ExtraMenu();
         static void RealMenu();
-        static void SubMenu();
+        static void SubMenu(std::string type);
         static void SubMenuReal();
+        static void SubMenuRealTSP();
         static void AmbienteTeste();
 
 };
