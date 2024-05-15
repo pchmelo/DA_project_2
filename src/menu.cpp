@@ -146,7 +146,7 @@ void Menu::RealMenu() {
     decision = stoi(decision_1);
     selectedGraph.readGraph(decision, "real");
     Graph<int> g = selectedGraph.graph;
-    lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
+    lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
     SubMenuReal();
 }
 
@@ -228,12 +228,11 @@ void Menu::SubMenuReal() {
     Functions::printLogo();
 
     cout << "\033[1;34mPlease choose your desired option:\033[0m\n";
-    cout << "\033[1;36m[ 1 ]\033[0m" << " Backtracking Algorithm" << endl;
-    cout << "\033[1;36m[ 2 ]\033[0m" << " Triangular Approximation Heuristic" << endl;
-    cout << "\033[1;36m[ 3 ]\033[0m" << " Other Heuristics" << endl;
-    cout << "\033[1;36m[ 4 ]\033[0m" << " TSP in the Real World" << endl;
-    cout << "\033[1;36m[ 5 ]\033[0m" << " Ambiente Teste" << endl;
-    cout << "\033[1;36m[ 6 ]\033[0m" << " Change Your Graph" << endl;
+    cout << "\033[1;36m[ 1 ]\033[0m" << " Triangular Approximation Heuristic" << endl;
+    cout << "\033[1;36m[ 2 ]\033[0m" << " Other Heuristics" << endl;
+    cout << "\033[1;36m[ 3 ]\033[0m" << " TSP in the Real World" << endl;
+    cout << "\033[1;36m[ 4 ]\033[0m" << " Ambiente Teste" << endl;
+    cout << "\033[1;36m[ 5 ]\033[0m" << " Change Your Graph" << endl;
     cout << "\033[1;31m[ 0 ]\033[0m" << " Exit" << endl;
     cout << endl;
 
@@ -253,15 +252,6 @@ void Menu::SubMenuReal() {
     while (true) {
         switch (decision) {
             case 1:
-            {
-                selectedGraph.checkGraph("real");
-                path.clear();
-                res = selectedGraph.backtrackingAlgorithm(0, path, elapsed_time);
-                Functions::printResultsOptimal(path, res, elapsed_time);
-                SubMenu();
-                break;
-            }
-            case 2:
                 selectedGraph.checkGraph("real");
                 selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
 
@@ -272,7 +262,7 @@ void Menu::SubMenuReal() {
                 Functions::printResultsHeuristic(path, res, elapsed_time, lowerBound);
                 SubMenu();
                 break;
-            case 3: {
+            case 2: {
                 selectedGraph.checkGraph("real");
                 //selectedGraph.commanderTriangularApprox();
 
@@ -287,12 +277,12 @@ void Menu::SubMenuReal() {
                 SubMenu();
                 break;
             }
-            case 4:
+            case 3:
                 break;
-            case 5:
+            case 4:
                 AmbienteTeste();
                 break;
-            case 6:
+            case 5:
                 Functions::resetGraph(selectedGraph);
                 Terminal();
                 break;
