@@ -12,6 +12,9 @@ double Menu::lowerBound;
 vector<int> path;
 std::chrono::duration<double> elapsed_time;
 double res;
+chrono::duration<double>  timeTriangular;
+chrono::duration<double>  timeHeuristic;
+string type;
 
 void Menu::Terminal() {
     Functions::printLogo();
@@ -79,10 +82,9 @@ void Menu::ToyMenu() {
     }
 
     decision = stoi(decision_1);
-    selectedGraph.readGraph(decision, "small");
-    selectedGraph.checkGraph("small");
-    lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
-    SubMenu();
+    type = "small";
+    selectedGraph.readGraph(decision, type);
+    SubMenu(type);
 }
 
 void Menu::ExtraMenu() {
@@ -116,11 +118,13 @@ void Menu::ExtraMenu() {
         ExtraMenu();
     }
 
+    type = "extra";
     decision = stoi(decision_1);
-    selectedGraph.readGraph(decision, "extra");
-    selectedGraph.checkGraph("extra");
+    selectedGraph.readGraph(decision, type);
+    selectedGraph.checkGraph(type);
     lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
-    SubMenu();
+    Functions::printLowerBound(lowerBound, elapsed_time);
+    SubMenu(type);
 }
 
 void Menu::RealMenu() {
@@ -146,11 +150,10 @@ void Menu::RealMenu() {
     decision = stoi(decision_1);
     selectedGraph.readGraph(decision, "real");
     Graph<int> g = selectedGraph.graph;
-    lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
     SubMenuReal();
 }
 
-void Menu::SubMenu() {
+void Menu::SubMenu(string type) {
     Functions::printLogo();
 
     cout << "\033[1;34mPlease choose your desired option:\033[0m\n";
@@ -170,7 +173,7 @@ void Menu::SubMenu() {
 
     if((decision_1 < "0") || (decision_1 > "5")){
         cout << "INVALID OPTION! \n";
-        SubMenu();
+        SubMenu(type);
     }
 
     decision = stoi(decision_1);
@@ -182,31 +185,49 @@ void Menu::SubMenu() {
                 path.clear();
                 res = selectedGraph.backtrackingAlgorithm(0, path, elapsed_time);
                 Functions::printResultsOptimal(path, res, elapsed_time);
-                SubMenu();
+                SubMenu(type);
                 break;
             }
             case 2:
+                if(type == "small") {
+                    selectedGraph.checkGraph(type);
+                    lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
+                    Functions::printLowerBound(lowerBound, elapsed_time);
+                    cout << endl;
+                }
                 selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
 
                 path.clear();
-                Functions::printLowerBound(lowerBound, elapsed_time);
                 cout << endl;
                 res = selectedGraph.triangularApproximationHeuristic(0, path, elapsed_time);
                 Functions::printResultsHeuristic(path, res, elapsed_time, lowerBound);
-                SubMenu();
+                SubMenu(type);
                 break;
             case 3: {
                 //selectedGraph.commanderTriangularApprox();
 
                 path.clear();
-                Functions::printLowerBound(lowerBound, elapsed_time);
-                cout << endl;
 
                 double res_2 = selectedGraph.triangularApproximationHeuristic(0, path, elapsed_time);
+                timeTriangular = elapsed_time;
                 double res_3 = selectedGraph.christofidesAlgorithm(path, elapsed_time);
+                timeHeuristic = elapsed_time;
                 Functions::printResultsHeuristic(path, res_3, elapsed_time, lowerBound);
-                cout << "New Algorithm is " << res_2 / res_3 << "x faster than the older one" << endl;
-                SubMenu();
+                cout << endl;
+                cout << "Efficiency Stats: " << endl;
+                cout << "Triangular Heuristic Algorithm result: " << res_2 << endl;
+                cout << "Other Heuristic Algorithm result: " << res_3 << endl;
+                cout << "New Algorithm is " << res_2 / res_3 << "x more efficient than the Triangular Heuristic Algorithm" << endl;
+                cout << endl;
+                cout << "Time Stats: " << endl;
+                cout << "Triangular Heuristic Algorithm time: " << timeTriangular.count() << endl;
+                cout << "Other Heuristic Algorithm time: " << timeHeuristic.count() << endl;
+                if(timeHeuristic / timeTriangular > 1) {
+                    cout << "Triangular Heuristic Algorithm is " << timeHeuristic / timeTriangular << "x faster than the New Algorithm" << endl;
+                } else {
+                    cout << "New Algorithm is " << timeTriangular / timeHeuristic << "x faster than the Triangular Heuristic Algorithm" << endl;
+                }
+                SubMenu(type);
                 break;
             }
             case 4:
@@ -253,31 +274,50 @@ void Menu::SubMenuReal() {
         switch (decision) {
             case 1:
                 selectedGraph.checkGraph("real");
+                lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
+                Functions::printLowerBound(lowerBound, elapsed_time);
+                cout << endl;
                 selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
 
                 path.clear();
-                Functions::printLowerBound(lowerBound, elapsed_time);
                 cout << endl;
                 res = selectedGraph.triangularApproximationHeuristic(0, path, elapsed_time);
                 Functions::printResultsHeuristic(path, res, elapsed_time, lowerBound);
-                SubMenu();
+                SubMenuReal();
                 break;
             case 2: {
                 selectedGraph.checkGraph("real");
+                lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
+                Functions::printLowerBound(lowerBound, elapsed_time);
+                cout << endl;
                 //selectedGraph.commanderTriangularApprox();
 
                 path.clear();
-                Functions::printLowerBound(lowerBound, elapsed_time);
-                cout << endl;
 
                 double res_2 = selectedGraph.triangularApproximationHeuristic(0, path, elapsed_time);
+                timeTriangular = elapsed_time;
                 double res_3 = selectedGraph.christofidesAlgorithm(path, elapsed_time);
+                timeHeuristic = elapsed_time;
                 Functions::printResultsHeuristic(path, res_3, elapsed_time, lowerBound);
-                cout << "New Algorithm is " << res_2 / res_3 << "x faster than the older one" << endl;
-                SubMenu();
+                cout << endl;
+                cout << "Efficiency Stats: " << endl;
+                cout << "Triangular Heuristic Algorithm result: " << res_2 << endl;
+                cout << "Other Heuristic Algorithm result: " << res_3 << endl;
+                cout << "New Algorithm is " << res_2 / res_3 << "x more efficient than the Triangular Heuristic Algorithm" << endl;
+                cout << endl;
+                cout << "Time Stats: " << endl;
+                cout << "Triangular Heuristic Algorithm time: " << timeTriangular.count() << endl;
+                cout << "New Algorithm time: " << timeHeuristic.count() << endl;
+                if(timeHeuristic / timeTriangular > 1) {
+                    cout << "Triangular Heuristic Algorithm is " << timeHeuristic / timeTriangular << "x faster than the New Algorithm" << endl;
+                } else {
+                    cout << "New Algorithm is " << timeTriangular / timeHeuristic << "x faster than the Triangular Heuristic Algorithm" << endl;
+                }
+                SubMenuReal();
                 break;
             }
             case 3:
+                SubMenuRealTSP();
                 break;
             case 4:
                 AmbienteTeste();
@@ -293,6 +333,43 @@ void Menu::SubMenuReal() {
         return;
     }
 }
+
+void Menu::SubMenuRealTSP() {
+    Functions::printLogo();
+    int tamanho = selectedGraph.graph.getVertexSet().size();
+    cout << "\033[1;34mPlease choose your desired starting point:\033[0m\n";
+    cout << "\033[1;34mYour choice must be an integer between 0 and " << tamanho-1 << "\033[0m\n";
+    cout << endl;
+
+    cout << "\033[1;34mDecision: \033[0m";
+    string decision_1;
+    int decision;
+    cin >> decision_1;
+    cout << endl;
+
+    try {
+        decision = std::stoi(decision_1);
+        if(decision < 0 || decision > tamanho - 1){
+            std::cout << "Invalid input. Please enter an integer between 0 and " << tamanho - 1 << ".\n";
+            SubMenuRealTSP();
+        }
+    } catch (std::invalid_argument& e) {
+        // If here, then decision_1 is not an integer.
+        std::cout << "Invalid input. Please enter an integer.\n";
+        SubMenuRealTSP();
+    }
+    path.clear();
+    res = selectedGraph.realTriangularApproximationHeuristic(decision, path, elapsed_time);
+    if(res == -1){
+        cout << "Graph is not connected!" << endl;
+        SubMenuReal();
+    }else{
+        lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
+        Functions::printResultsHeuristic(path, res, elapsed_time, lowerBound);
+        SubMenuReal();
+    }
+}
+
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
