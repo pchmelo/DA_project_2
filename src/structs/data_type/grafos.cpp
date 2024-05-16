@@ -71,7 +71,7 @@ void grafos::addAllEdge(int choice, string type) {
         else if(choice == 2){
             max = 11;
         }
-        else if(choice == 3){
+        else if(choice == 3 || choice == 4){
             max = 5;
         }
         for(int i = 0; i < max; i++){
@@ -176,6 +176,9 @@ void grafos::readGraph(int choice, string type) {
         }
         else if(choice == 3){
             input = "../src/Data/Toy-Graphs/tourism.csv";
+        }
+        else if(choice == 4){
+            input = "../src/Data/Toy-Graphs/test44.csv";
         }
     }
     else if(type == "extra"){
@@ -874,19 +877,20 @@ double grafos::triangularApproximationHeuristicReal(int src, vector<int> &path, 
 
     path.push_back(v_current->getInfo());
 
+    stack<Vertex<int>*> vertexStack;
+    vertexStack.push(v_current);
+
     while(path.size() < this->graph.getVertexSet().size()){
         double min_cost = numeric_limits<double>::max();
         Vertex<int>* v_next = nullptr;
 
         for(auto e : v_current->getAdj()){
-            // Check if the vertex has been visited
             if(!e->getDest()->isVisited() && e->getWeight() < min_cost){
                 min_cost = e->getWeight();
                 v_next = e->getDest();
             }
         }
 
-        // If all vertices have been visited, allow revisiting
         if(v_next == nullptr && this->hasVisitedAllVertices()){
             for(auto e : v_current->getAdj()){
                 if(e->getWeight() < min_cost){
@@ -896,19 +900,45 @@ double grafos::triangularApproximationHeuristicReal(int src, vector<int> &path, 
             }
         }
 
+        if(v_next == nullptr){
+            while(!vertexStack.empty()){
+                Vertex<int>* v_back = vertexStack.top();
+                vertexStack.pop();
+                for(auto e : v_back->getAdj()){
+                    if(!e->getDest()->isVisited()){
+                        min_cost = e->getWeight();
+                        v_next = e->getDest();
+                        path.push_back(v_back->getInfo());
+                        break;
+                    }
+                }
+                if(v_next != nullptr){
+                    v_current = v_back;
+                    break;
+                }
+            }
+        }
+
         if(v_next != nullptr) {
             v_next->setVisited(true);
             path.push_back(v_next->getInfo());
             res += min_cost;
             v_current = v_next;
+            vertexStack.push(v_current);
         }
     }
 
     Edge<int>* edge;
-    if(this->checkEdge(v_current, source, edge)){
-        res += edge->getWeight();
+
+    for(int i = (path.size() - 1); i >= 0; i--){
+        auto v = this->graph.findVertex(path[i]);
+        if(checkEdge(v, source, edge)){
+            break;
+        }
+        path.push_back(path[i-1]);
     }
 
+    res += edge->getWeight();
     path.push_back(source->getInfo());
 
     auto finish = chrono::high_resolution_clock::now();

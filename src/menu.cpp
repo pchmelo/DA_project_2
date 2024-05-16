@@ -373,8 +373,8 @@ void Menu::SubMenuRealTSP() {
 
 void Menu::AmbienteTeste() {
     cout << "Welcome to the Test Environment!" << endl;
-    int choice = 1;
-    string type = "real";
+    int choice = 4;
+    string type = "small";
 
     grafos g;
     g.readGraph(choice, type);
@@ -382,13 +382,8 @@ void Menu::AmbienteTeste() {
     vector<int> path_real;
     vector<int> notVisited;
 
-
-    double res = g.triangularApproximationHeuristicReal(0,path_real, elapsed_time);
+    g.triangularApproximationHeuristicReal(3,path_real, elapsed_time);
     bool flag = g.checkerPath(path_real, notVisited);
-    Functions::printResultsHeuristic(path_real, g.calculatePathCost(path_real), elapsed_time, 1);
-
-    g.triangularApproximationHeuristicReal(0,path_real, elapsed_time);
-    flag = g.checkerPath(path_real, notVisited);
     Functions::printResultsHeuristic(path_real, g.calculatePathCost(path_real), elapsed_time, 1);
 
     g.checkGraph(type);
