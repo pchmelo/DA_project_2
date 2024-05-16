@@ -228,6 +228,8 @@ void grafos::readGraph(int choice, string type) {
         }
     }
 
+    int i =0;
+
     ifstream file(input);
     string line;
     getline(file, line);
@@ -243,6 +245,7 @@ void grafos::readGraph(int choice, string type) {
         }
         this->graph.addEdge(stoi(values[0]), stoi(values[1]), stod(values[2]));
         this->graph.addEdge(stoi(values[1]), stoi(values[0]), stod(values[2]));
+
     }
 }
 
@@ -702,7 +705,8 @@ vector<Edge<int>*> grafos::minimumWeightMatching(vector<Vertex<int>*> oddDegreeV
 
         if(edge_min != nullptr){
             res.push_back(edge_min);
-            oddDegreeVertices.erase(find(oddDegreeVertices.begin(), oddDegreeVertices.end(), vertex_min));
+            auto it = find(oddDegreeVertices.begin(), oddDegreeVertices.end(), vertex_min);
+            oddDegreeVertices.erase(it);
         }
     }
     return res;
@@ -858,4 +862,86 @@ double grafos::realTriangularApproximationHeuristic(int src, std::vector<int> &p
     return -1;
 }
 
+double grafos::triangularApproximationHeuristicReal(int src, vector<int> &path, chrono::duration<double> &time){
+    auto start = chrono::high_resolution_clock::now();
+    this->resetStatus();
+
+    Vertex<int>* source = this->graph.findVertex(src);
+    double res = 0;
+
+    Vertex<int>* v_current = source;
+    v_current->setVisited(true);
+
+    path.push_back(v_current->getInfo());
+
+    while(path.size() < this->graph.getVertexSet().size()){
+        double min_cost = numeric_limits<double>::max();
+        Vertex<int>* v_next = nullptr;
+
+        for(auto e : v_current->getAdj()){
+            // Check if the vertex has been visited
+            if(!e->getDest()->isVisited() && e->getWeight() < min_cost){
+                min_cost = e->getWeight();
+                v_next = e->getDest();
+            }
+        }
+
+        // If all vertices have been visited, allow revisiting
+        if(v_next == nullptr && this->hasVisitedAllVertices()){
+            for(auto e : v_current->getAdj()){
+                if(e->getWeight() < min_cost){
+                    min_cost = e->getWeight();
+                    v_next = e->getDest();
+                }
+            }
+        }
+
+        if(v_next != nullptr) {
+            v_next->setVisited(true);
+            path.push_back(v_next->getInfo());
+            res += min_cost;
+            v_current = v_next;
+        }
+    }
+
+    Edge<int>* edge;
+    if(this->checkEdge(v_current, source, edge)){
+        res += edge->getWeight();
+    }
+
+    path.push_back(source->getInfo());
+
+    auto finish = chrono::high_resolution_clock::now();
+    time = finish - start;
+
+    return res;
+}
+
+bool grafos::hasVisitedAllVertices() {
+    for(auto v : this->graph.getVertexSet()){
+        if(!v->isVisited()){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool grafos::checkerPath(vector<int> &path, vector<int> &notVisited){
+   this->resetStatus();
+   for(int i : path){
+       Vertex<int>* v = this->graph.findVertex(i);
+       v->setVisited(true);
+   }
+
+    for(auto v : this->graph.getVertexSet()){
+         if(!v->isVisited()){
+             notVisited.push_back(v->getInfo());
+         }
+    }
+    if(notVisited.empty()){
+        return true;
+    }
+
+    return false;
+}
 

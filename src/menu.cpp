@@ -378,10 +378,18 @@ void Menu::AmbienteTeste() {
 
     grafos g;
     g.readGraph(choice, type);
-    auto f = g.readCoordinates(choice, type);
-    int i = g.graph.getVertexSet().size();
+
+    vector<int> path_real;
+    vector<int> notVisited;
 
 
+    double res = g.triangularApproximationHeuristicReal(0,path_real, elapsed_time);
+    bool flag = g.checkerPath(path_real, notVisited);
+    Functions::printResultsHeuristic(path_real, g.calculatePathCost(path_real), elapsed_time, 1);
+
+    g.triangularApproximationHeuristicReal(0,path_real, elapsed_time);
+    flag = g.checkerPath(path_real, notVisited);
+    Functions::printResultsHeuristic(path_real, g.calculatePathCost(path_real), elapsed_time, 1);
 
     g.checkGraph(type);
 

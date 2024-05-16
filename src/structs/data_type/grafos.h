@@ -76,6 +76,9 @@ public:
     //2.4 - Is Connected
     bool isConnected();
     double realTriangularApproximationHeuristic(int src, std::vector<int> &path, std::chrono::duration<double> &time);
+    double triangularApproximationHeuristicReal(int src, std::vector<int> &path, std::chrono::duration<double> &time);
+    bool checkerPath(std::vector<int> &path, std::vector<int> &notVisited);
+    bool hasVisitedAllVertices();
 
 };
 
