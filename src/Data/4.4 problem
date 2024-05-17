@@ -40,6 +40,47 @@ o mais curto, nem uma solução ótima. No entanto, é uma solução que pode se
 soluções. Caso o grafo seja muito grande, o algoritmo poderá ser uma boa opção para encontrar uma solução rápida.
 
 2.ª Solução - Greedy Algorithm modificado
-Nesta solução, será utilizado um algoritmo greedy já previamente utilizado para resolver o 4.2. Para uma situação de um grafo que
-seja conectado (regular TSP)
+Nesta solução, será utilizado um algoritmo greedy já previamente utilizado (triangular heuristic) para resolver o 4.2.
+Para uma situação de um grafo que seja conectado (regular TSP), o algoritmo utiliza o valor visited para saber se já
+passou por todos os vértices. No entanto, para este problema, o algoritmo terá de ser modificado para que possa passar
+por todos os vértices, já que nem sempre é possível continuar a visitar os vérices sem troceder a um vértice anterior.
+Com isto em mente, o algoritmo terá que ser adaptado para que possa retroceder caso não seja possível continuar a visitar.
 
+Passos:
+
+1. Colocar todos os vértices como unvisited;
+2. Encontrar o vértice de origem;
+3. Colocar o vértice corrente como origem e marcá-lo como visitado;
+4. Adicionar o vértice à lista que forma o caminho (result);
+5. Inicializar uma stack e adicionar o vértice corrente;
+6. Enquanto o tamanho do caminho for menor que o número total de vértices no grafo, realizar os seguintes passos:
+    1.º- Inicializar o custo mínimo como infinito e o próximo vértice como nulo;
+    2.º- Para cada aresta do vértice corrente, se o vértice de destino não foi visitado e o peso da aresta for menor que
+         o custo mínimo, atualizar o custo mínimo e o próximo vértice;
+    3.º- Por cada edge do vértice atual, se o vértice de destino não foi visitado e o peso da aresta for menor que o custo
+         mínimo, atualizar o custo mínimo e o próximo vértice;
+    4.º- Se não existir próximo vértice e todos os vértices foram visitados, encontrar a aresta com o menor peso do vértice
+            corrente para qualquer vértice e atualizar o próximo vértice;
+    5.º- Se ainda não existir um próximo vértice, fazer backtracking, retirando vértices da stack até encontrar um vértice com
+         um vizinho não visitado. Atualizar o próximo vértice e adicionar o vértice backtracked ao caminho;
+    6.º- Se um próximo vértice foi encontrado, marcar como visitado, adicionar ao caminho, adicionar o peso ao custo total e
+            adicionar à stack;
+
+7. Depois de visitar todos os vértices, encontrar a aresta que liga o último vértice no caminho ao vértice de origem;
+8. Adicionar o peso desta aresta ao custo total e adicionar o vértice de origem ao caminho;
+9. Retornar o custo total do caminho.
+
+Comentários sobre a segunda solução:
+Esta solução é mais complexa que a primeira, mas é mais eficiente e poderá entregar uma solução mais próxima da ótima, já que apresenta
+uma propriedade greedy na mesma. No entanto, o algoritmo apresenta uma complexidade O(V^2 * E), que é maior que a complexidade da primeira
+solução, já que tem de percorrer todos os vértices e arestas do grafo. Além disso, a propriedade de backtracking poderá fazer com que
+o algoritmo apresente um resultado pior do que se fosse aplicado num contexto TSP regular.
+
+Ponderações finais sobre o problema abordado:
+Ao analisar o problema e pesquisar por possíveis soluções, foi possível compreencder o grau de complexidade que lhe é acrescido a partir do
+momento que é transporto para um cenário mais real. O meio utilizado pelo nosso grupo para tentar resolver o problema acaba por ser apenas adaptar
+algoritmos de TSP já existentes e colocar uma propriedade para voltar para trás, o que acaba por ser muito longe do que poderia ser o ideal. Outra
+complicação está na dificuldade de avaliar o quão bom o nosso resultado obtido é. Apesar, de termos a refência da lower bound, acaba por ser também
+ser o mesmo valor de referência para o problema original (regular TSP), o que não nos dá uma ideia clara de quão bom é o resultado obtido.
+Algo podemos concluir nesta pequena análise é que ao colocar um problema com menos restrições acaba por complicar na obtenção de uma solução quer ótima
+quer boa.
