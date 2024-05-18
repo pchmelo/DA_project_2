@@ -465,18 +465,18 @@ void grafos::commanderTriangularApprox(){
 
 void grafos::triangularApprox(Vertex<int>* source) {
     for(auto e : source->getAdj()){
-        double min = findMinLongTrianhularPath(source, e->getDest());
+        double min = findMinLongTriangularPath(source, e->getDest());
         if(min < e->getWeight()){
             e->setWeight(min);
         }
     }
 }
 
-double grafos::findMinLongTrianhularPath(Vertex<int>* source, Vertex<int>* dest){
+double grafos::findMinLongTriangularPath(Vertex<int>* source, Vertex<int>* dest){
     double res = numeric_limits<double>::max();
     for(auto v : this->graph.getVertexSet()){
         if(v->getInfo() != source->getInfo() && v->getInfo() != dest->getInfo()){
-            double aux = findLongTrianhularPath(source, v, dest);
+            double aux = findLongTriangularPath(source, v, dest);
             if(aux < res){
                 res = aux;
             }
@@ -485,7 +485,7 @@ double grafos::findMinLongTrianhularPath(Vertex<int>* source, Vertex<int>* dest)
     return res;
 }
 
-double grafos::findLongTrianhularPath(Vertex<int>* source, Vertex<int>* longVertex, Vertex<int>* dest) {
+double grafos::findLongTriangularPath(Vertex<int>* source, Vertex<int>* longVertex, Vertex<int>* dest) {
     double res = 0;
     for(auto e : source->getAdj()){
         if(e->getDest()->getInfo() == longVertex->getInfo()){

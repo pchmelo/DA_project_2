@@ -56,8 +56,8 @@ public:
 
     void commanderTriangularApprox();
     void triangularApprox(Vertex<int>* source);
-    double findMinLongTrianhularPath(Vertex<int>* source, Vertex<int>* dest);
-    double findLongTrianhularPath(Vertex<int>* source, Vertex<int>* longVertex, Vertex<int>* dest);
+    double findMinLongTriangularPath(Vertex<int>* source, Vertex<int>* dest);
+    double findLongTriangularPath(Vertex<int>* source, Vertex<int>* longVertex, Vertex<int>* dest);
 
     //2.3 - Christofides Algorithm
     double christofidesAlgorithm(std::vector<int> &path, std::chrono::duration<double> &time);

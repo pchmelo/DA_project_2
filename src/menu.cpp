@@ -32,7 +32,7 @@ void Menu::Terminal() {
     cin >> decision_1;
     cout << endl;
 
-    if((decision_1 < "0") || (decision_1 > "4")){
+    if((decision_1 < "0") || (decision_1 > "3")){
         cout << "INVALID OPTION! \n";
         Terminal();
     }
@@ -49,9 +49,6 @@ void Menu::Terminal() {
                 break;
             case 3:
                 RealMenu();
-                break;
-            case 4:
-                AmbienteTeste();
                 break;
             default:
                 break;
@@ -134,6 +131,7 @@ void Menu::RealMenu() {
     cout << "\033[1;36m[ 1 ]\033[0m" << " graph1" << endl;
     cout << "\033[1;36m[ 2 ]\033[0m" << " graph2" << endl;
     cout << "\033[1;36m[ 3 ]\033[0m" << " graph3" << endl;
+    cout << "\033[1;36m[ 4 ]\033[0m" << " Pratical example" << endl;
     cout << endl;
 
     cout << "\033[1;34mDecision: \033[0m";
@@ -142,13 +140,19 @@ void Menu::RealMenu() {
     cin >> decision_1;
     cout << endl;
 
-    if((decision_1 < "0") || (decision_1 > "3")){
+    if((decision_1 < "0") || (decision_1 > "4")){
         cout << "INVALID OPTION! \n";
         RealMenu();
     }
 
     decision = stoi(decision_1);
-    selectedGraph.readGraph(decision, "real");
+    if(decision == 4){
+        type = "small";
+        selectedGraph.readGraph(decision, type);
+    }else {
+        type = "real";
+        selectedGraph.readGraph(decision, type);
+    }
     Graph<int> g = selectedGraph.graph;
     SubMenuReal();
 }
@@ -160,8 +164,7 @@ void Menu::SubMenu(string type) {
     cout << "\033[1;36m[ 1 ]\033[0m" << " Backtracking Algorithm" << endl;
     cout << "\033[1;36m[ 2 ]\033[0m" << " Triangular Approximation Heuristic" << endl;
     cout << "\033[1;36m[ 3 ]\033[0m" << " Other Heuristics" << endl;
-    cout << "\033[1;36m[ 4 ]\033[0m" << " Ambiente Teste" << endl;
-    cout << "\033[1;36m[ 5 ]\033[0m" << " Change Your Graph" << endl;
+    cout << "\033[1;36m[ 4 ]\033[0m" << " Change Your Graph" << endl;
     cout << "\033[1;31m[ 0 ]\033[0m" << " Exit" << endl;
     cout << endl;
 
@@ -171,7 +174,7 @@ void Menu::SubMenu(string type) {
     cin >> decision_1;
     cout << endl;
 
-    if((decision_1 < "0") || (decision_1 > "5")){
+    if((decision_1 < "0") || (decision_1 > "4")){
         cout << "INVALID OPTION! \n";
         SubMenu(type);
     }
@@ -231,9 +234,6 @@ void Menu::SubMenu(string type) {
                 break;
             }
             case 4:
-                AmbienteTeste();
-                break;
-            case 5:
                 Functions::resetGraph(selectedGraph);
                 Terminal();
                 break;
@@ -252,8 +252,7 @@ void Menu::SubMenuReal() {
     cout << "\033[1;36m[ 1 ]\033[0m" << " Triangular Approximation Heuristic" << endl;
     cout << "\033[1;36m[ 2 ]\033[0m" << " Other Heuristics" << endl;
     cout << "\033[1;36m[ 3 ]\033[0m" << " TSP in the Real World" << endl;
-    cout << "\033[1;36m[ 4 ]\033[0m" << " Ambiente Teste" << endl;
-    cout << "\033[1;36m[ 5 ]\033[0m" << " Change Your Graph" << endl;
+    cout << "\033[1;36m[ 4 ]\033[0m" << " Change Your Graph" << endl;
     cout << "\033[1;31m[ 0 ]\033[0m" << " Exit" << endl;
     cout << endl;
 
@@ -263,7 +262,7 @@ void Menu::SubMenuReal() {
     cin >> decision_1;
     cout << endl;
 
-    if((decision_1 < "0") || (decision_1 > "5")){
+    if((decision_1 < "0") || (decision_1 > "4")){
         cout << "INVALID OPTION! \n";
         SubMenuReal();
     }
@@ -320,9 +319,6 @@ void Menu::SubMenuReal() {
                 SubMenuRealTSP();
                 break;
             case 4:
-                AmbienteTeste();
-                break;
-            case 5:
                 Functions::resetGraph(selectedGraph);
                 Terminal();
                 break;
@@ -359,85 +355,15 @@ void Menu::SubMenuRealTSP() {
         SubMenuRealTSP();
     }
     path.clear();
-    res = selectedGraph.realTriangularApproximationHeuristic(decision, path, elapsed_time);
     if(res == -1){
         cout << "Graph is not connected!" << endl;
         SubMenuReal();
     }else{
+        vector<int> notVisited;
         lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
+        res = selectedGraph.triangularApproximationHeuristicReal(decision,path, elapsed_time);
+        bool flag = selectedGraph.checkerPath(path, notVisited);
         Functions::printResultsHeuristic(path, res, elapsed_time, lowerBound);
         SubMenuReal();
     }
-}
-
-
-void Menu::AmbienteTeste() {
-    cout << "Welcome to the Test Environment!" << endl;
-    int choice = 4;
-    string type = "small";
-
-    grafos g;
-    g.readGraph(choice, type);
-
-    vector<int> path_real;
-    vector<int> notVisited;
-
-    g.triangularApproximationHeuristicReal(3,path_real, elapsed_time);
-    bool flag = g.checkerPath(path_real, notVisited);
-    Functions::printResultsHeuristic(path_real, g.calculatePathCost(path_real), elapsed_time, 1);
-
-    g.checkGraph(type);
-
-    //g.checkGraphSmall();
-    //Functions::printGraph(g);
-    //cout << "--------------------------------------" << endl;
-
-    //2.1
-
-    //auto vec = g.prim();
-    //double primCost = g.primTotalCost(vec);
-
-    //cout << "Prim Cost is " << primCost << endl;
-    //cout << "Lower Bound one tree is "  << g.lowerBoundCommander() << endl;
-
-    vector<int> path;
-
-    auto v = g.graph.findVertex(0);
-    std::chrono::duration<double> time;
-    double lowerBound = g.lowerBoundCommander(false, time);
-    /*
-    Functions::printLowerBound(lowerBound, time);
-    cout << endl;
-
-    double res = g.backtrackingAlgorithm(0, path, time);
-    //int i = 10;
-    Functions::printResultsOptimal(path, res, time);
-    */
-    //double res = g.backtrackingAlgorithm(0, path, time);
-    //Functions::printResultsOptimal((path, res, time);
-
-
-    //g.checkGraph();
-
-    //2.2
-    //g.commanderTriangularApprox();
-    //Functions::printGraph(g);
-
-
-    cout << endl;
-    path.clear();
-    Functions::printLowerBound(lowerBound, time);
-    cout << endl;
-
-    double res_2 = g.triangularApproximationHeuristic(0, path, time);
-    Functions::printResultsHeuristic(path, res_2, time, lowerBound);
-
-    cout << endl;
-
-    //2.3
-    double res_3 = g.christofidesAlgorithm(path, time);
-    Functions::printResultsHeuristic(path, res_3, time, lowerBound);
-    cout << res_3/res_2 <<endl;
-
-    exit(0);
 }
