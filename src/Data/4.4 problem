@@ -1,73 +1,80 @@
-Problema: Tentar desenvolver um algoritmo que seja capaz de entregar uma solução para um grafo, que não seja
+Problema: Tentar desenvolver um algoritmo que seja capaz de entregar uma solução para um grafo, no qual não seja
 possível fazer um circuito (passar por todos os vértices do grafo sem repetir um vértice).
 
-Contexto: Em situações da vida real, não existe sempre um caminho que passe por todos os cidades (vértices), por exemplo
-uma cidade que esteja localizada numa montanha, muito provavelmente terá que voltar à cidade anterior. Ou seja, não
-é possível fazer um circuito. Desta forma, o algoritmo desenvolvido terá de ser capaz de entregar uma solução que
-passe em todas cidades, mas sem a restrição de não repetir cidades.
+Contexto: Em situações da vida real, não existe sempre um caminho que passe por todos as cidades (vértices). Por exemplo,
+uma cidade que esteja localizada numa montanha, muito provavelmente terá que voltar à cidade anterior, ou seja, não
+é possível fazer um circuito. Desta forma, o algoritmo desenvolvido tem de ser capaz de entregar uma solução que
+passe em todas cidades, mas sem a restrição de não repetir cidades. //mas permitindo repetir cidades
 
-Problema: Ao remover as restrições para o problema, faz com que aumente as possibilidades de soluções, tornando o problema
-mais complexo. Entregar uma possivel solução para o problema até pode ser simples, mas a melhor ou até mesmo uma boa solução
+Problema: Ao remover as restrições para o problema, faz com que haja mais soluções, tornando o problema mais complexo.
+Entregar uma possível solução para o problema até pode ser simples, mas a melhor ou até mesmo uma boa solução
 pode ser muito mais difícil de encontrar.
 
 
-Considerações: Como não é possível ter a certeza de qual seria o melhor resultado para o problema (já que teria uma
+Considerações: Como não é possível ter a certeza de qual será o melhor resultado para o problema (já que teria uma
 maior complexidade que o problema original), terá que se recorrer na mesma a um valor de referência para avaliar o
-resultado obtido. Poderá ser assim utilizado o valor da Weight do grafo 1-Tree como lower bound para avaliar a solução.
+resultado obtido. Poderá ser assim utilizado o valor do peso do grafo 1-Tree como limite inferior para avaliar a solução.
 
-Para resolver este problema será possível utilizar dois diferentes algoritmos.
+Para resolver este problema, será possível utilizar dois algoritmos diferentes.
 
 1.ª Solução - DFS (Depth First Search):
-Nesta solução, será utilizado o algoritmo DFS como base para encotrar um possível caminho. O algoritmo irá percorrer
-o grafo, visitando todos os vértices, mas sem a restrição de não repetir vértices. Caso ele depare com algum vértice que
-já tenha sido visitado, ele irá ignorar e continuar a sua busca. Caso não exista mais vértices para visitar, ele irá
-fazer backtracking até encontrar um vértice que ainda não tenha sido visitado. O algoritmo irá terminar quando todos os
-vertices tiverem sido visitados pelo menos uma vez. No final ele irá voltar à origem. Todos os vertices por onde o algoritmo
+Nesta solução, será utilizado o algoritmo DFS como base para encontrar um caminho possível. O algoritmo irá percorrer
+o grafo, visitando todos os vértices, permitindo repetir vértices. Caso se depare com algum vértice que já tenha sido
+visitado, irá ignorá-lo e continuar a sua busca. Caso não exista mais vértices para visitar, irá fazer backtracking
+até encontrar um vértice que ainda não tenha sido visitado. O algoritmo irá terminar quando todos os vértices
+tiverem sido visitados pelo menos uma vez. No final, voltará à origem. Todos os vértices por onde o algoritmo
 passa são guardados numa lista, que será a solução do problema.
 
 Passos:
 1. Inicializar o grafo com todos os vértices como unvisited;
 2. Inicializar uma lista para guardar os vértices visitados (caminho formado);
 3. Encontrar o vértice de origem;
-4. Realizar o algoritmo DFS, visitando todos os vértices (guardar todos os vértices atravessados);
-5. Retornar à origem (poderá ter que fazer backtracking até poder voltar à origem);
+4. Aplicar o algoritmo DFS, visitando todos os vértices (guardando todos os vértices atravessados);
+5. Retornar à origem (poderá ter de fazer backtracking até poder voltar à origem);
 6. Calcular o valor do caminho encontrado.
 
 Comentários sobre a primeira solução:
-Este algoritmo é simples, rápido e garante uma solução para o problema. No entanto,
-não garante que seja a melhor solução. O algoritmo irá percorrer todos os vértices, mas não garante que o caminho seja
-o mais curto, nem uma solução ótima. No entanto, é uma solução que pode ser utilizada para avaliar a qualidade de outras
-soluções. Caso o grafo seja muito grande, o algoritmo poderá ser uma boa opção para encontrar uma solução rápida.
+Este algoritmo é simples, rápido e garante uma solução para o problema. No entanto, não garante que seja a melhor solução.
+O algoritmo irá percorrer todos os vértices, mas não garante que o caminho seja o mais curto, nem uma solução ótima.
+No entanto, é uma solução que pode ser utilizada para avaliar a qualidade de outras soluções.
+Caso o grafo seja muito grande, o algoritmo poderá ser uma boa opção para encontrar uma solução rápida.
 
 2.ª Solução - Greedy Algorithm modificado
 Nesta solução, será utilizado um algoritmo greedy já previamente utilizado (triangular heuristic) para resolver o 4.2.
 Para uma situação de um grafo que seja conectado (regular TSP), o algoritmo utiliza o valor visited para saber se já
 passou por todos os vértices. No entanto, para este problema, o algoritmo terá de ser modificado para que possa passar
-por todos os vértices, já que nem sempre é possível continuar a visitar os vérices sem troceder a um vértice anterior.
+por todos os vértices, já que nem sempre é possível continuar a visitar os vértices sem retroceder a um vértice anterior.
 Com isto em mente, o algoritmo terá que ser adaptado para que possa retroceder caso não seja possível continuar a visitar.
 
 Passos:
 
 1. Colocar todos os vértices como unvisited;
+
 2. Encontrar o vértice de origem;
-3. Colocar o vértice corrente como origem e marcá-lo como visitado;
+
+3. Colocar o vértice atual como origem e marcá-lo como visitado;
+
 4. Adicionar o vértice à lista que forma o caminho (result);
-5. Inicializar uma stack e adicionar o vértice corrente;
+
+5. Inicializar uma stack e adicionar o vértice atual;
+
 6. Enquanto o tamanho do caminho for menor que o número total de vértices no grafo, realizar os seguintes passos:
     1.º- Inicializar o custo mínimo como infinito e o próximo vértice como nulo;
-    2.º- Para cada aresta do vértice corrente, se o vértice de destino não foi visitado e o peso da aresta for menor que
+    2.º- Para cada aresta do vértice atual, se o vértice de destino não foi visitado e o peso da aresta for menor que
          o custo mínimo, atualizar o custo mínimo e o próximo vértice;
     3.º- Por cada edge do vértice atual, se o vértice de destino não foi visitado e o peso da aresta for menor que o custo
          mínimo, atualizar o custo mínimo e o próximo vértice;
     4.º- Se não existir próximo vértice e todos os vértices foram visitados, encontrar a aresta com o menor peso do vértice
-            corrente para qualquer vértice e atualizar o próximo vértice;
+         corrente para qualquer vértice e atualizar o próximo vértice;
     5.º- Se ainda não existir um próximo vértice, fazer backtracking, retirando vértices da stack até encontrar um vértice com
          um vizinho não visitado. Atualizar o próximo vértice e adicionar o vértice backtracked ao caminho;
     6.º- Se um próximo vértice foi encontrado, marcar como visitado, adicionar ao caminho, adicionar o peso ao custo total e
-            adicionar à stack;
+         adicionar à stack;
 
 7. Depois de visitar todos os vértices, encontrar a aresta que liga o último vértice no caminho ao vértice de origem;
+
 8. Adicionar o peso desta aresta ao custo total e adicionar o vértice de origem ao caminho;
+
 9. Retornar o custo total do caminho.
 
 Comentários sobre a segunda solução:
@@ -78,9 +85,9 @@ o algoritmo apresente um resultado pior do que se fosse aplicado num contexto TS
 
 Ponderações finais sobre o problema abordado:
 Ao analisar o problema e pesquisar por possíveis soluções, foi possível compreencder o grau de complexidade que lhe é acrescido a partir do
-momento que é transporto para um cenário mais real. O meio utilizado pelo nosso grupo para tentar resolver o problema acaba por ser apenas adaptar
+momento que é transposto para um cenário mais real. O meio utilizado pelo nosso grupo para tentar resolver o problema acaba por ser apenas adaptar
 algoritmos de TSP já existentes e colocar uma propriedade para voltar para trás, o que acaba por ser muito longe do que poderia ser o ideal. Outra
-complicação está na dificuldade de avaliar o quão bom o nosso resultado obtido é. Apesar, de termos a refência da lower bound, acaba por ser também
-ser o mesmo valor de referência para o problema original (regular TSP), o que não nos dá uma ideia clara de quão bom é o resultado obtido.
-Algo podemos concluir nesta pequena análise é que ao colocar um problema com menos restrições acaba por complicar na obtenção de uma solução quer ótima
+complicação está na dificuldade de avaliar o quão bom é o resultado que obtivemos. Apesar de termos a referência da lower bound, acaba por ser também
+o mesmo valor de referência para o problema original (regular TSP), o que não nos dá uma ideia clara de quão bom é o resultado obtido.
+O que podemos concluir nesta pequena análise é que, ao colocar um problema com menos restrições, acabamos por complicar na obtenção de uma solução quer ótima
 quer boa.

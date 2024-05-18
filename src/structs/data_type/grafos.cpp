@@ -1,7 +1,3 @@
-//
-// Created by pchmelo on 27-04-2024.
-//
-
 #include "grafos.h"
 #include "fstream"
 #include "sstream"
@@ -286,14 +282,14 @@ void grafos::normalizeGraph(Vertex<int>* source) {
             if(it == vertexSet.end()){
                 vertexSet.push_back(e->getDest());
                 q.push(e->getDest());
-                triangular_proximation(source, v, e->getDest());
+                triangular_approximation(source, v, e->getDest());
             }
         }
     }
 
 }
 
-void grafos::triangular_proximation(Vertex<int>* v1, Vertex<int>* v2, Vertex<int>* v3) {
+void grafos::triangular_approximation(Vertex<int>* v1, Vertex<int>* v2, Vertex<int>* v3) {
     Edge<int>* edge1;
     Edge<int>* edge2;
 
@@ -339,15 +335,15 @@ void grafos::normalizationRealCoordinates(Vertex<int>* source) {
 }
 
 vector<Vertex<int>*> grafos::getVertexSetOfVertex(Vertex<int>* source) {
-    vector<Vertex<int>*> res;
+vector<Vertex<int>*> res;
 
-    for(auto e : source->getAdj()){
-        res.push_back(e->getDest());
-    }
+for(auto e : source->getAdj()){
+res.push_back(e->getDest());
+}
 
-    res.push_back(source);
+res.push_back(source);
 
-    return res;
+return res;
 }
 
 double grafos::backtrackingAlgorithm(int source, vector<int> &path, chrono::duration<double> &time) {
@@ -371,33 +367,33 @@ double grafos::backtrackingAlgorithm(int source, vector<int> &path, chrono::dura
 }
 
 void grafos::auxBacktrackingAlgorithm(Vertex<int>* v_src, Vertex<int>* vertex, vector<int> &current_path, double &res, double cost_now, int count, vector<int> &path) {
-    Edge<int>* edge;
-    bool check = this->checkEdge(vertex, v_src, edge);
-    if(count == this->graph.getVertexSet().size() && check){
-        double cost = cost_now + edge->getWeight();
-        if(cost < res){
-            res = cost;
-            path = current_path;
-        }
+Edge<int>* edge;
+bool check = this->checkEdge(vertex, v_src, edge);
+if(count == this->graph.getVertexSet().size() && check){
+double cost = cost_now + edge->getWeight();
+if(cost < res){
+res = cost;
+path = current_path;
+}
 
-        return;
-    }
+return;
+}
 
-    for(auto v : this->graph.getVertexSet()){
-        check = this->checkEdge(vertex, v, edge);
-        if(!v->isVisited() && check){
-            v->setVisited(true);
-            cost_now += edge->getWeight();
-            current_path[count] = v->getInfo();
+for(auto v : this->graph.getVertexSet()){
+check = this->checkEdge(vertex, v, edge);
+if(!v->isVisited() && check){
+v->setVisited(true);
+cost_now += edge->getWeight();
+current_path[count] = v->getInfo();
 
-            if(cost_now < res){
-                auxBacktrackingAlgorithm(v_src, v, current_path, res, cost_now, count + 1, path);
-            }
+if(cost_now < res){
+auxBacktrackingAlgorithm(v_src, v, current_path, res, cost_now, count + 1, path);
+}
 
-            cost_now -= edge->getWeight();
-            v->setVisited(false);
-        }
-    }
+cost_now -= edge->getWeight();
+v->setVisited(false);
+}
+}
 
 }
 
@@ -673,46 +669,46 @@ double grafos::christofidesAlgorithm(std::vector<int> &path, std::chrono::durati
 }
 
 vector<Vertex<int>*> grafos::oddDegreeVertices(vector<Vertex<int>*> mst, Graph<int> g){
-    vector<Vertex<int>*> res;
-    for(auto v : mst){
-        Vertex<int>* vertex = g.findVertex(v->getInfo());
-        int out_degree = vertex->getAdj().size();
-        if(out_degree % 2 != 0){
-            res.push_back(v);
-        }
-    }
-    return res;
+vector<Vertex<int>*> res;
+for(auto v : mst){
+Vertex<int>* vertex = g.findVertex(v->getInfo());
+int out_degree = vertex->getAdj().size();
+if(out_degree % 2 != 0){
+res.push_back(v);
+}
+}
+return res;
 }
 
 vector<Edge<int>*> grafos::minimumWeightMatching(vector<Vertex<int>*> oddDegreeVertices){
-    vector<Edge<int>*> res;
+vector<Edge<int>*> res;
 
-    while(!oddDegreeVertices.empty()){
-        Vertex<int>* v = oddDegreeVertices.back();
-        oddDegreeVertices.pop_back();
+while(!oddDegreeVertices.empty()){
+Vertex<int>* v = oddDegreeVertices.back();
+oddDegreeVertices.pop_back();
 
-        double min_w = numeric_limits<double>::infinity();
-        Edge<int>* edge_min;
-        Vertex<int>* vertex_min;
+double min_w = numeric_limits<double>::infinity();
+Edge<int>* edge_min;
+Vertex<int>* vertex_min;
 
-        for(auto w : oddDegreeVertices){
-            Edge<int>* v_w_edge;
-            bool check = checkEdge(v, w, v_w_edge);
+for(auto w : oddDegreeVertices){
+Edge<int>* v_w_edge;
+bool check = checkEdge(v, w, v_w_edge);
 
-            if(check && v_w_edge->getWeight() < min_w){
-                min_w = v_w_edge->getWeight();
-                edge_min = v_w_edge;
-                vertex_min = w;
-            }
-        }
+if(check && v_w_edge->getWeight() < min_w){
+min_w = v_w_edge->getWeight();
+edge_min = v_w_edge;
+vertex_min = w;
+}
+}
 
-        if(edge_min != nullptr){
-            res.push_back(edge_min);
-            auto it = find(oddDegreeVertices.begin(), oddDegreeVertices.end(), vertex_min);
-            oddDegreeVertices.erase(it);
-        }
-    }
-    return res;
+if(edge_min != nullptr){
+res.push_back(edge_min);
+auto it = find(oddDegreeVertices.begin(), oddDegreeVertices.end(), vertex_min);
+oddDegreeVertices.erase(it);
+}
+}
+return res;
 }
 
 Graph<int> grafos::createMultiGraph(vector<Edge<int>*> edges, Graph<int> g){
@@ -957,16 +953,16 @@ bool grafos::hasVisitedAllVertices() {
 }
 
 bool grafos::checkerPath(vector<int> &path, vector<int> &notVisited){
-   this->resetStatus();
-   for(int i : path){
-       Vertex<int>* v = this->graph.findVertex(i);
-       v->setVisited(true);
-   }
+    this->resetStatus();
+    for(int i : path){
+        Vertex<int>* v = this->graph.findVertex(i);
+        v->setVisited(true);
+    }
 
     for(auto v : this->graph.getVertexSet()){
-         if(!v->isVisited()){
-             notVisited.push_back(v->getInfo());
-         }
+        if(!v->isVisited()){
+            notVisited.push_back(v->getInfo());
+        }
     }
     if(notVisited.empty()){
         return true;
