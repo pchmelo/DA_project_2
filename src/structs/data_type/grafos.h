@@ -40,9 +40,11 @@ public:
     Graph<int> copyGraph(Graph<int> g);
 
     //Type - Small
-    //1 - shipping.csv, 2 - stadiums.csv, 3 - tourism.csv
+    //1 - shipping.csv, 2 - stadiums.csv, 3 - tourism.csv, 4 - test44.csv
     //Type - Extra
     //1 - 25, 2 - 50, 3 - 75, 4 - 100, 5 - 200, 6 - 300, 7 - 400, 8 - 500, 9 - 600, 10 - 700, 11 - 800, 12 - 900
+    //Type - Real
+    //1- Graph1, 2- Graph2, 3- Graph3
     /**
      * @brief Function to add all edges to the graph.
      *
