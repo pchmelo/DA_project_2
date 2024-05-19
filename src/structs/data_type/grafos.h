@@ -22,6 +22,8 @@ public:
     /**
      * @brief Function to check if an edge exists between two vertices.
      *
+     * If it exists, the function stores the edge Edge<int>* &edge.
+     *
      * @param src The source vertex.
      * @param dest  The destination vertex.
      * @param g The graph.
@@ -39,12 +41,6 @@ public:
      */
     Graph<int> copyGraph(Graph<int> g);
 
-    //Type - Small
-    //1 - shipping.csv, 2 - stadiums.csv, 3 - tourism.csv, 4 - test44.csv
-    //Type - Extra
-    //1 - 25, 2 - 50, 3 - 75, 4 - 100, 5 - 200, 6 - 300, 7 - 400, 8 - 500, 9 - 600, 10 - 700, 11 - 800, 12 - 900
-    //Type - Real
-    //1- Graph1, 2- Graph2, 3- Graph3
     /**
      * @brief Function to add all edges to the graph.
      *
@@ -65,6 +61,17 @@ public:
 
     /**
      * @brief Function to read the graph.
+     *
+     * There are three types of graphs: Small, Extra and Real.
+     *
+     * Type - Small
+     * 1 - shipping.csv, 2 - stadiums.csv, 3 - tourism.csv, 4 - test44.csv
+     *
+     * Type - Extra
+     * 1 - 25, 2 - 50, 3 - 75, 4 - 100, 5 - 200, 6 - 300, 7 - 400, 8 - 500, 9 - 600, 10 - 700, 11 - 800, 12 - 900
+     *
+     * Type - Real
+     * 1- Graph1, 2- Graph2, 3- Graph3
      *
      * @param choice The file.
      * @param type Small or Extra.
