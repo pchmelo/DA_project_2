@@ -119,7 +119,7 @@ void Menu::ExtraMenu() {
     decision = stoi(decision_1);
     selectedGraph.readGraph(decision, type);
     selectedGraph.checkGraph(type);
-    lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
+    lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
     Functions::printLowerBound(lowerBound, elapsed_time);
     SubMenu(type);
 }
@@ -194,11 +194,11 @@ void Menu::SubMenu(string type) {
             case 2:
                 if(type == "small") {
                     selectedGraph.checkGraph(type);
-                    lowerBound = selectedGraph.lowerBoundCommander(true, elapsed_time);
+                    lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
                     Functions::printLowerBound(lowerBound, elapsed_time);
                     cout << endl;
                 }
-                selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
+                //selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
 
                 path.clear();
                 cout << endl;
@@ -276,7 +276,7 @@ void Menu::SubMenuReal() {
                 lowerBound = selectedGraph.lowerBoundCommander(false, elapsed_time);
                 Functions::printLowerBound(lowerBound, elapsed_time);
                 cout << endl;
-                selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
+                //selectedGraph.commanderTriangularApprox(); //demora demasiado tempo a partir do choice 5
 
                 path.clear();
                 cout << endl;
